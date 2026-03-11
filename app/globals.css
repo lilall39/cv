@@ -236,3 +236,9 @@ body.preview-mode #cv-content {
 #cv-sidebar h1 {
   font-size: calc(1.25rem + 1pt) !important;
 }
+#body-contact > div:first-child .flex {
+  justify-content: center !important;
+}
+#body-contact > h2 {
+  text-align: center !important;
+}
