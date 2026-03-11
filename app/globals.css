@@ -63,6 +63,13 @@
     order: 1 !important;
     align-self: stretch !important;
     padding: 1rem !important;
+    text-align: center !important;
+  }
+  #cv-sidebar h1,
+  #cv-sidebar h2,
+  #cv-sidebar p,
+  #cv-sidebar a {
+    text-align: center !important;
   }
   /* Colonne droite = large, textes qui emplissent */
   #cv-card main {
