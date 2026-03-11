@@ -38,9 +38,17 @@
 }
 .export-pdf #cv-card {
   width: 210mm !important;
+  border: none !important;
+  box-shadow: none !important;
 }
 .export-pdf #cv-content {
   max-width: 210mm !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+.export-pdf #cv-sidebar {
+  border: none !important;
+  box-shadow: none !important;
 }
 
 .preview-mode .no-print {
@@ -114,8 +122,18 @@ body.preview-mode #cv-content {
   max-height: none !important;
 }
 
+#cv-content {
+  border: none !important;
+  box-shadow: none !important;
+}
 #cv-card {
   width: 900px;
   max-width: 100%;
   min-height: 297mm;
+  border: none !important;
+  box-shadow: none !important;
+}
+#cv-sidebar {
+  border: none !important;
+  box-shadow: none !important;
 }
