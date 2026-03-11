@@ -676,7 +676,19 @@ export default function CvPage() {
         title="Aperçu du CV"
       />
 
-      <ScrollIndicators previewMode={previewMode} />
+      <div className="no-print fixed bottom-6 left-6 flex flex-col gap-2 z-30 items-start">
+        <button
+          onClick={togglePreview}
+          className="bg-warm text-espresso px-6 py-3 rounded-full shadow-lg hover:bg-mocha hover:text-cream transition-all flex items-center gap-2 font-medium"
+        >
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+          </svg>
+          Aperçu
+        </button>
+        <ScrollIndicators previewMode={previewMode} />
+      </div>
 
       <input
         type="file"
@@ -707,31 +719,6 @@ export default function CvPage() {
           <span className="absolute bottom-full right-0 mb-2 px-3 py-2 text-xs bg-espresso text-cream rounded-lg opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity w-56 text-right shadow-lg z-50">
             Réimporter un CV précédemment enregistré : sélectionnez le fichier téléchargé avec « Enregistrer ». Utile pour retrouver votre CV sur un autre appareil.
           </span>
-        </button>
-        <button
-          onClick={togglePreview}
-          className="bg-warm text-espresso px-6 py-3 rounded-full shadow-lg hover:bg-mocha hover:text-cream transition-all flex items-center gap-2 font-medium"
-        >
-          <svg
-            className="w-5 h-5"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-            />
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-            />
-          </svg>
-          Aperçu
         </button>
         <button
           onClick={exportPDF}
@@ -909,14 +896,12 @@ function ScrollIndicators({ previewMode }: { previewMode: boolean }) {
   if (previewMode) return null
 
   return (
-    <div className="no-print fixed bottom-6 left-6 flex flex-col gap-2 z-30">
-      <div
-        className="px-3 py-2 rounded-full bg-mocha/90 text-cream text-sm font-medium shadow-lg"
-        aria-label="Page remplie"
-        title="Contenu = % d'une page A4"
-      >
-        Rempli: {fillPct}%
-      </div>
+    <div
+      className="px-3 py-2 rounded-full bg-mocha/90 text-cream text-sm font-medium shadow-lg"
+      aria-label="Page remplie"
+      title="Contenu = % d'une page A4"
+    >
+      Rempli: {fillPct}%
     </div>
   )
 }
