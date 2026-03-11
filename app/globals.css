@@ -38,6 +38,7 @@
 }
 .export-pdf #cv-card {
   width: 210mm !important;
+  min-height: 297mm !important;
   border: none !important;
   box-shadow: none !important;
 }
@@ -45,6 +46,24 @@
   max-width: 210mm !important;
   border: none !important;
   box-shadow: none !important;
+  padding-top: 0 !important;
+}
+.export-pdf #main-sections {
+  gap: 0 !important;
+}
+.export-pdf #section-header {
+  margin-top: 0 !important;
+  margin-bottom: -6rem !important;
+  padding-top: 0 !important;
+}
+.export-pdf #section-header .flex {
+  margin-top: 0.25rem !important;
+}
+.export-pdf #section-profile {
+  margin-top: -12rem !important;
+}
+.export-pdf main {
+  padding-top: 0.25rem !important;
 }
 .export-pdf #cv-sidebar {
   border: none !important;

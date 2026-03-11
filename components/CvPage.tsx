@@ -311,20 +311,29 @@ export default function CvPage() {
 
   const exportPDF = useCallback(async () => {
     if (typeof window === 'undefined') return
-    const html2pdf = (await import('html2pdf.js')).default
+    window.scrollTo(0, 0)
     document.body.classList.add('export-pdf')
+    await document.fonts.ready
+    await new Promise((r) => setTimeout(r, 150))
     const element = document.getElementById('cv-content')
-    if (!element) return
+    if (!element) {
+      document.body.classList.remove('export-pdf')
+      return
+    }
+    const html2pdf = (await import('html2pdf.js')).default
     const opt = {
-      margin: 10,
-      filename: 'mon-cv.pdf',
+      margin: [2, 8, 8, 8] as [number, number, number, number],
+      filename: `cv-${(data.header?.name || 'mon-cv').replace(/\s+/g, '-')}.pdf`,
       image: { type: 'jpeg' as const, quality: 0.98 },
-      html2canvas: { scale: 2 },
+      html2canvas: { scale: 2, useCORS: true, letterRendering: true, logging: false },
       jsPDF: { unit: 'mm' as const, format: 'a4' as const, orientation: 'portrait' as const },
     }
-    await html2pdf().set(opt).from(element).save()
-    document.body.classList.remove('export-pdf')
-  }, [])
+    try {
+      await html2pdf().set(opt).from(element).save()
+    } finally {
+      document.body.classList.remove('export-pdf')
+    }
+  }, [data.header?.name])
 
   const togglePreview = useCallback(() => {
     const iframe = iframeRef.current
