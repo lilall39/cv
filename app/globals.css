@@ -29,6 +29,7 @@
     min-height: 297mm !important;
     box-shadow: none !important;
     border: 2px solid #5C4A47 !important;
+    border-right: none !important;
   }
   #cv-sidebar {
     border: none !important;
@@ -49,6 +50,7 @@
   display: flex !important;
   flex-direction: row !important;
   border: 2px solid #5C4A47 !important;
+  border-right: none !important;
   box-shadow: none !important;
 }
 .export-pdf #cv-content {
@@ -146,6 +148,7 @@ body.preview-mode #cv-content {
   max-width: 100%;
   min-height: 297mm;
   border: 2px solid #5C4A47;
+  border-right: none;
   box-shadow: none !important;
   filter: none !important;
 }
