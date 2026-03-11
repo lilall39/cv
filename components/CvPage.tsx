@@ -687,7 +687,6 @@ export default function CvPage() {
           </svg>
           Aperçu
         </button>
-        <ScrollIndicators previewMode={previewMode} />
       </div>
 
       <input
@@ -866,42 +865,6 @@ function ExperienceCard({
           </button>
         </div>
       </div>
-    </div>
-  )
-}
-
-function ScrollIndicators({ previewMode }: { previewMode: boolean }) {
-  const [fillPct, setFillPct] = useState(0)
-
-  useEffect(() => {
-    const updateFill = () => {
-      if (previewMode) return
-      const card = document.getElementById('cv-card')
-      if (!card) return
-      const h = card.offsetHeight
-      const a4Px = 297 * (96 / 25.4)
-      const pct = Math.round((h / a4Px) * 100)
-      setFillPct(pct)
-    }
-    updateFill()
-    window.addEventListener('resize', updateFill)
-    const card = document.getElementById('cv-card')
-    if (card && typeof ResizeObserver !== 'undefined') {
-      const ro = new ResizeObserver(updateFill)
-      ro.observe(card)
-      return () => ro.disconnect()
-    }
-  }, [previewMode])
-
-  if (previewMode) return null
-
-  return (
-    <div
-      className="px-3 py-2 rounded-full bg-mocha/90 text-cream text-sm font-medium shadow-lg"
-      aria-label="Page remplie"
-      title="Contenu = % d'une page A4"
-    >
-      Rempli: {fillPct}%
     </div>
   )
 }
