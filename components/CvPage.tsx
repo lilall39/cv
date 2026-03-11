@@ -337,10 +337,10 @@ export default function CvPage() {
             }
             saveData(merged)
           } else {
-            alert('Fichier invalide. Utilisez un fichier JSON exporté par cette application.')
+            alert('Fichier invalide. Utilisez un fichier exporté par cette application.')
           }
         } catch {
-          alert('Fichier invalide. Utilisez un fichier JSON exporté par cette application.')
+          alert('Fichier invalide. Utilisez un fichier exporté par cette application.')
         }
       }
       reader.readAsText(file)
@@ -705,7 +705,7 @@ export default function CvPage() {
           </svg>
           Importer
           <span className="absolute bottom-full right-0 mb-2 px-3 py-2 text-xs bg-espresso text-cream rounded-lg opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity w-56 text-right shadow-lg z-50">
-            Réimporter un CV précédemment enregistré : sélectionnez le fichier JSON téléchargé avec « Enregistrer ». Utile pour retrouver votre CV sur un autre appareil.
+            Réimporter un CV précédemment enregistré : sélectionnez le fichier téléchargé avec « Enregistrer ». Utile pour retrouver votre CV sur un autre appareil.
           </span>
         </button>
         <button
