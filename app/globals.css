@@ -28,7 +28,7 @@
     width: 210mm !important;
     min-height: 297mm !important;
     box-shadow: none !important;
-    border: none !important;
+    border: 2px solid #5C4A47 !important;
   }
   #cv-sidebar {
     border: none !important;
@@ -48,7 +48,7 @@
 .export-pdf #cv-card {
   display: flex !important;
   flex-direction: row !important;
-  border: none !important;
+  border: 2px solid #5C4A47 !important;
   box-shadow: none !important;
 }
 .export-pdf #cv-content {
@@ -144,7 +144,7 @@ body.preview-mode #cv-content {
   width: 900px;
   max-width: 100%;
   min-height: 297mm;
-  border: none !important;
+  border: 2px solid #5C4A47;
   box-shadow: none !important;
 }
 #cv-sidebar {
