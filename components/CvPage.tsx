@@ -58,7 +58,7 @@ export default function CvPage() {
 
   useEffect(() => {
     const heights = data.sectionHeights || {}
-    ;['header', 'profile', 'contact', 'skills', 'formation', 'interests'].forEach(
+    ;['header', 'profile', 'contact', 'formation', 'interests'].forEach(
       (id) => {
         const body = document.getElementById(`body-${id}`)
         const h = heights[id]
@@ -68,6 +68,10 @@ export default function CvPage() {
         }
       }
     )
+    const skillsBody = document.getElementById('body-skills')
+    if (skillsBody) {
+      skillsBody.style.maxHeight = ''
+    }
     const expBody = document.getElementById('body-experience')
     if (expBody) {
       expBody.style.maxHeight = ''
@@ -335,7 +339,7 @@ export default function CvPage() {
           const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><script src="https://cdn.tailwindcss.com"><\/script>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script>tailwind.config={theme:{extend:{colors:{cream:'#F5F0E8',sand:'#E8E2D8',warm:'#D4C4B0',espresso:'#3D2C29',mocha:'#5C4A47',oat:'#FAF8F5'},fontFamily:{display:['Cormorant Garamond'],body:['Outfit']}}}}<\/script>
-<style>body{font-family:Outfit,sans-serif;background:#F5F0E8;color:#3D2C29;margin:0;padding:2rem;min-height:100%}.section-body{overflow:visible!important}#cv-content,#cv-card,#cv-sidebar{border:none!important;box-shadow:none!important}</style></head>
+<style>body{font-family:Outfit,sans-serif;background:#F5F0E8;color:#3D2C29;margin:0;padding:2rem;min-height:100%}.section-body{overflow:visible!important}#body-skills{overflow:visible!important;max-height:none!important}#cv-content,#cv-card,#cv-sidebar{border:none!important;box-shadow:none!important}</style></head>
 <body>${clone.outerHTML}</body></html>`
           iframe.srcdoc = html
         }
@@ -443,7 +447,6 @@ export default function CvPage() {
                   Modifier
                 </button>
               </div>
-              <ResizeHandle sectionId="skills" onResize={setSectionHeight} />
             </div>
 
             <div className="mb-8 relative">

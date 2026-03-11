@@ -117,6 +117,11 @@ body.preview-mode #cv-content {
   min-height: 60px;
 }
 
+#body-skills {
+  overflow: visible !important;
+  max-height: none !important;
+  min-height: fit-content !important;
+}
 #body-experience {
   overflow: visible !important;
   max-height: none !important;
