@@ -25,13 +25,21 @@
     padding: 0 !important;
   }
   #cv-card {
+    display: flex !important;
+    flex-direction: row !important;
     width: 210mm !important;
     min-height: 297mm !important;
     box-shadow: none !important;
     border: 2px solid #C4A574 !important;
+    page-break-inside: avoid !important;
   }
   #cv-sidebar {
+    flex-shrink: 0 !important;
+    width: 60mm !important;
     border-right: 2px solid #C4A574 !important;
+  }
+  #cv-card > main {
+    flex: 1 !important;
   }
   .card-hover:hover {
     transform: none !important;

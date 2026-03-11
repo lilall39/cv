@@ -329,7 +329,7 @@ body{font-family:Outfit,sans-serif;background:#fff;color:#3D2C29;margin:0;paddin
 .section-body{overflow:visible!important}
 #body-skills{overflow:visible!important;max-height:none!important}
 #cv-content{border:none!important;box-shadow:none!important}#cv-sidebar{border-right:2px solid #C4A574!important;box-shadow:none!important}#cv-card{border:2px solid #C4A574!important;box-shadow:none!important}
-@media print{@page{size:A4;margin:10mm}body{padding:0;background:#fff}}
+@media print{@page{size:A4;margin:10mm}body{padding:0;background:#fff}#cv-card{display:flex!important;flex-direction:row!important;width:210mm!important;page-break-inside:avoid!important}#cv-sidebar{flex-shrink:0!important;width:60mm!important}}
 <\/style></head>
 <body>${clone.outerHTML}</body></html>`
     printWindow.document.write(html)
