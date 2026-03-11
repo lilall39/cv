@@ -71,9 +71,6 @@
   #cv-sidebar a {
     text-align: center !important;
   }
-  #cv-sidebar h1 {
-    font-size: calc(1.25rem + 1pt) !important;
-  }
   /* Colonne droite = large, textes qui emplissent */
   #cv-card main {
     flex: 1 1 auto !important;
@@ -235,4 +232,7 @@ body.preview-mode #cv-content {
 #cv-sidebar {
   border-right: 2px solid #8B7B6F !important;
   box-shadow: none !important;
+}
+#cv-sidebar h1 {
+  font-size: calc(1.25rem + 1pt) !important;
 }
