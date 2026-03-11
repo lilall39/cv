@@ -391,10 +391,10 @@ body{font-family:Outfit,sans-serif;background:#fff;color:#3D2C29;margin:0;paddin
       <div
         id="cv-content"
         ref={cvContentRef}
-        className="w-full max-w-[900px] px-4"
+        className="w-full max-w-[900px] px-4 shadow-none"
         style={{ background: bgMain }}
       >
-        <div id="cv-card" className="flex flex-col lg:flex-row gap-0 overflow-hidden">
+        <div id="cv-card" className="flex flex-col lg:flex-row gap-0 overflow-hidden shadow-none">
           <aside
             id="cv-sidebar"
             className="lg:w-60 shrink-0 text-espresso p-6 md:p-8 order-2 lg:order-1"

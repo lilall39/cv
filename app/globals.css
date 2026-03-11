@@ -139,6 +139,7 @@ body.preview-mode #cv-content {
 #cv-content {
   border: none !important;
   box-shadow: none !important;
+  filter: none !important;
 }
 #cv-card {
   width: 900px;
@@ -146,6 +147,7 @@ body.preview-mode #cv-content {
   min-height: 297mm;
   border: 2px solid #5C4A47;
   box-shadow: none !important;
+  filter: none !important;
 }
 #cv-sidebar {
   border: none !important;
