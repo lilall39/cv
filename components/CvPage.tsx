@@ -1,6 +1,11 @@
 'use client'
 
 import { useCallback, useEffect, useRef, useState } from 'react'
+
+function capitalizeFirstOnly(str: string): string {
+  if (!str || !str.length) return str
+  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase()
+}
 import { useCvData } from '@/lib/useCvData'
 import { Modal } from './Modal'
 import { ResizeHandle } from './ResizeHandle'
@@ -311,37 +316,14 @@ export default function CvPage() {
 
   const exportPDF = useCallback(() => {
     if (typeof window === 'undefined') return
-    const cvContent = document.getElementById('cv-content')
-    if (!cvContent) return
-    const clone = cvContent.cloneNode(true) as HTMLElement
-    clone.querySelectorAll('.no-print').forEach((el) => el.remove())
-    const printWindow = window.open('', '_blank')
-    if (!printWindow) {
-      window.print()
-      return
-    }
-    const html = `<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8"><title>CV - ${(data.header?.name || 'mon-cv').replace(/</g, '&lt;')}</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
-<script src="https://cdn.tailwindcss.com"><\/script>
-<script>tailwind.config={theme:{extend:{colors:{cream:'#F5F0E8',sand:'#E8E2D8',warm:'#D4C4B0',espresso:'#3D2C29',mocha:'#5C4A47',oat:'#FAF8F5'},fontFamily:{display:['Cormorant Garamond'],body:['Outfit']}}}}<\/script>
-<style>
-body{font-family:Outfit,sans-serif;background:#fff;color:#3D2C29;margin:0;padding:1rem;min-height:100%}
-.section-body{overflow:visible!important}
-#body-skills{overflow:visible!important;max-height:none!important}
-#cv-content{border:none!important;box-shadow:none!important}#cv-sidebar{border-right:2px solid #8B7B6F!important;box-shadow:none!important}#cv-card{border:2px solid #8B7B6F!important;box-shadow:none!important}
-@media print{@page{size:A4;margin:10mm}body{padding:0;background:#fff}}
-<\/style></head>
-<body>${clone.outerHTML}</body></html>`
-    printWindow.document.write(html)
-    printWindow.document.close()
-    printWindow.onload = () => {
-      setTimeout(() => {
-        printWindow.focus()
-        printWindow.print()
-        printWindow.onafterprint = () => printWindow.close()
-      }, 250)
-    }
-  }, [data.header?.name])
+    const cleanup = () => document.body.classList.remove('export-pdf')
+    window.addEventListener('afterprint', cleanup, { once: true })
+    window.scrollTo(0, 0)
+    document.body.classList.add('export-pdf')
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => window.print())
+    })
+  }, [])
 
   const togglePreview = useCallback(() => {
     const iframe = iframeRef.current
@@ -513,8 +495,8 @@ body{font-family:Outfit,sans-serif;background:#fff;color:#3D2C29;margin:0;paddin
                   className="relative pb-0 mb-0 -mb-24"
                 >
                   <div className="flex items-center justify-center gap-2 flex-wrap w-full mt-2">
-                    <p className="font-display text-2xl md:text-3xl font-bold text-espresso capitalize">
-                      {data.header.jobTitle || 'Poste recherché'}
+                    <p className="font-display text-2xl md:text-3xl font-bold text-espresso">
+                      {capitalizeFirstOnly(data.header.jobTitle || 'Poste recherché')}
                     </p>
                     <button
                       onClick={editJobTitle}
