@@ -100,6 +100,12 @@
   #body-experience p {
     font-size: 14px !important;
   }
+  #experiences-container > div {
+    margin-top: 1.25em !important;
+  }
+  #experiences-container > div:first-child {
+    margin-top: 0 !important;
+  }
   .card-hover:hover {
     transform: none !important;
   }
