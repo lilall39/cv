@@ -443,7 +443,7 @@ export default function CvPage() {
                   {data.skills.map((skill) => (
                     <span
                       key={skill}
-                      className="px-3 py-1.5 bg-warm/50 text-espresso rounded-full text-xs font-medium"
+                      className="text-espresso text-xs font-medium"
                     >
                       {skill}
                     </span>
