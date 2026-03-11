@@ -309,36 +309,37 @@ export default function CvPage() {
     )
   }, [data.colors, openModal, closeModal, updateColors])
 
-  const exportPDF = useCallback(async () => {
+  const exportPDF = useCallback(() => {
     if (typeof window === 'undefined') return
-    window.scrollTo(0, 0)
-    document.body.classList.add('export-pdf')
-    await document.fonts.ready
-    await new Promise((r) => setTimeout(r, 150))
-    const element = document.getElementById('cv-content')
-    if (!element) {
-      document.body.classList.remove('export-pdf')
+    const cvContent = document.getElementById('cv-content')
+    if (!cvContent) return
+    const clone = cvContent.cloneNode(true) as HTMLElement
+    clone.querySelectorAll('.no-print').forEach((el) => el.remove())
+    const printWindow = window.open('', '_blank')
+    if (!printWindow) {
+      window.print()
       return
     }
-    const html2pdf = (await import('html2pdf.js')).default
-    const opt = {
-      margin: 10,
-      filename: `cv-${(data.header?.name || 'mon-cv').replace(/\s+/g, '-')}.pdf`,
-      image: { type: 'jpeg' as const, quality: 0.98 },
-      html2canvas: {
-        scale: 2,
-        useCORS: true,
-        letterRendering: true,
-        logging: false,
-        windowWidth: 1024,
-        windowHeight: 1400,
-      },
-      jsPDF: { unit: 'mm' as const, format: 'a4' as const, orientation: 'portrait' as const },
-    }
-    try {
-      await html2pdf().set(opt).from(element).save()
-    } finally {
-      document.body.classList.remove('export-pdf')
+    const html = `<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8"><title>CV - ${(data.header?.name || 'mon-cv').replace(/</g, '&lt;')}</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"><\/script>
+<script>tailwind.config={theme:{extend:{colors:{cream:'#F5F0E8',sand:'#E8E2D8',warm:'#D4C4B0',espresso:'#3D2C29',mocha:'#5C4A47',oat:'#FAF8F5'},fontFamily:{display:['Cormorant Garamond'],body:['Outfit']}}}}<\/script>
+<style>
+body{font-family:Outfit,sans-serif;background:#fff;color:#3D2C29;margin:0;padding:1rem;min-height:100%}
+.section-body{overflow:visible!important}
+#body-skills{overflow:visible!important;max-height:none!important}
+#cv-content,#cv-card,#cv-sidebar{border:none!important;box-shadow:none!important}
+@media print{@page{size:A4;margin:10mm}body{padding:0;background:#fff}}
+<\/style></head>
+<body>${clone.outerHTML}</body></html>`
+    printWindow.document.write(html)
+    printWindow.document.close()
+    printWindow.onload = () => {
+      setTimeout(() => {
+        printWindow.focus()
+        printWindow.print()
+        printWindow.onafterprint = () => printWindow.close()
+      }, 250)
     }
   }, [data.header?.name])
 
