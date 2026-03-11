@@ -707,15 +707,6 @@ export default function CvPage() {
       />
       <div className="no-print fixed bottom-6 right-6 flex flex-col gap-3">
         <button
-          onClick={exportCvData}
-          className="bg-warm text-espresso px-6 py-3 rounded-full shadow-lg hover:bg-mocha hover:text-cream transition-all flex items-center gap-2 font-medium"
-        >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
-          </svg>
-          Enregistrer
-        </button>
-        <button
           onClick={() => document.getElementById('cv-import-input')?.click()}
           className="bg-warm text-espresso px-6 py-3 rounded-full shadow-lg hover:bg-mocha hover:text-cream transition-all flex items-center gap-2 font-medium group relative"
           title="Réimporter un CV enregistré"
@@ -727,6 +718,15 @@ export default function CvPage() {
           <span className="absolute bottom-full right-0 mb-2 px-3 py-2 text-xs bg-espresso text-cream rounded-lg opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity w-56 text-right shadow-lg z-50">
             Enregistrez votre CV, ouvrez-le sur l&apos;application pour pouvoir le modifier.
           </span>
+        </button>
+        <button
+          onClick={exportCvData}
+          className="bg-warm text-espresso px-6 py-3 rounded-full shadow-lg hover:bg-mocha hover:text-cream transition-all flex items-center gap-2 font-medium"
+        >
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+          </svg>
+          Enregistrer
         </button>
         <button
           onClick={exportPDF}
