@@ -524,13 +524,13 @@ export default function CvPage() {
                 className="section-card group relative -mt-20"
               >
                 <div className="flex items-center justify-between gap-2 mb-1 mt-2">
-                  <h2 className="font-display text-xl font-extrabold text-black pt-2 pb-2 border-t-2 border-b-2 border-warm flex-1">
+                  <h2 className="font-display text-xl font-extrabold text-black pt-2 pb-2 border-t-2 border-b-2 border-gray-300 flex-1">
                     Expériences professionnelles
                   </h2>
                   <div className="flex no-print opacity-60 hover:opacity-100 transition-opacity">
                     <button
                       onClick={() => moveSectionUp('experience')}
-                      className="p-1.5 rounded-lg hover:bg-sand text-mocha"
+                      className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-600"
                       title="Monter"
                     >
                       <svg
@@ -549,7 +549,7 @@ export default function CvPage() {
                     </button>
                     <button
                       onClick={() => moveSectionDown('experience')}
-                      className="p-1.5 rounded-lg hover:bg-sand text-mocha"
+                      className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-600"
                       title="Descendre"
                     >
                       <svg
@@ -585,7 +585,7 @@ export default function CvPage() {
                   </div>
                   <button
                     onClick={handleAddExperience}
-                    className="no-print mt-4 w-full py-3 px-4 rounded-xl border-2 border-dashed border-warm text-mocha hover:bg-warm/20 hover:border-mocha transition-all flex items-center justify-center gap-2 text-sm"
+                    className="no-print mt-4 w-full py-3 px-4 rounded-xl border-2 border-dashed border-gray-300 text-gray-600 hover:bg-gray-100 hover:border-gray-400 transition-all flex items-center justify-center gap-2 text-sm"
                   >
                     <svg
                       className="w-5 h-5"
