@@ -239,6 +239,23 @@ body.preview-mode #cv-content {
 #cv-sidebar h2 {
   text-align: center !important;
 }
+#body-contact .space-y-3,
+#body-formation,
+#body-interests {
+  text-align: center !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+}
+#body-skills {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  text-align: center !important;
+}
+#body-skills > .flex {
+  justify-content: center !important;
+}
 #body-contact > div:first-child .flex {
   justify-content: center !important;
 }
