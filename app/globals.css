@@ -35,47 +35,58 @@
     justify-content: center !important;
     align-items: flex-start !important;
   }
+  /* A4 natif : pas de scale, la colonne droite emplit la largeur */
   #cv-content {
     padding: 0 !important;
-    width: 900px !important;
-    max-width: none !important;
-    transform: scale(0.85) !important;
-    transform-origin: top center !important;
+    width: 200mm !important;
+    max-width: 200mm !important;
+    transform: none !important;
     flex-shrink: 0 !important;
   }
   #cv-card {
     flex-direction: row !important;
     page-break-inside: avoid !important;
     break-inside: avoid !important;
-    /* 349mm × 0.85 ≈ 297mm pour remplir la page */
-    min-height: 349mm !important;
-    height: auto !important;
+    width: 200mm !important;
+    min-height: 287mm !important;
     overflow: hidden !important;
     border: 2px solid #8B7B6F !important;
     border-top: 2px solid #8B7B6F !important;
     box-sizing: border-box !important;
   }
-  /* Colonne gauche = étroite (Contact, Compétences, Formation, Centres d'intérêt) */
+  /* Colonne gauche = étroite */
   #cv-sidebar {
-    width: 15rem !important;
-    min-width: 15rem !important;
-    max-width: 15rem !important;
-    flex: 0 0 15rem !important;
+    width: 55mm !important;
+    min-width: 55mm !important;
+    max-width: 55mm !important;
+    flex: 0 0 55mm !important;
     order: 1 !important;
     align-self: stretch !important;
+    padding: 1rem !important;
   }
-  /* Colonne droite = large (Poste, Profil, Expériences) */
+  /* Colonne droite = large, textes qui emplissent */
   #cv-card main {
     flex: 1 1 auto !important;
     min-width: 0 !important;
     order: 2 !important;
+    padding: 1.25rem 1.5rem !important;
+  }
+  #main-sections {
+    overflow: visible !important;
+    width: 100% !important;
+  }
+  #body-experience,
+  #experiences-container {
+    width: 100% !important;
+    max-width: 100% !important;
   }
   .section-body {
     overflow: visible !important;
     max-height: none !important;
   }
-  #main-sections {
-    overflow: hidden !important;
+  #cv-card main p,
+  #cv-card main .leading-relaxed {
+    line-height: 1.5 !important;
   }
   .card-hover:hover {
     transform: none !important;
