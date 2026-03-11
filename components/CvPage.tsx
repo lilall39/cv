@@ -707,10 +707,11 @@ export default function CvPage() {
       />
       <div className="no-print fixed bottom-6 right-6 flex flex-col gap-3">
         <div className="relative flex flex-col items-end">
-          <span className="mb-2 px-3 py-2 text-xs bg-espresso text-cream rounded-xl shadow-lg w-56 text-right relative z-50">
+          <div className="mb-2 px-4 py-3 text-sm bg-white text-espresso rounded-[1.5rem] border-[3px] border-espresso shadow-xl w-56 text-right relative z-50 leading-relaxed">
             Enregistrez votre CV, ouvrez-le sur l&apos;application pour pouvoir le modifier.
-            <span className="absolute -bottom-2 right-8 w-0 h-0 border-l-[8px] border-l-transparent border-r-[8px] border-r-transparent border-t-[10px] border-t-espresso" />
-          </span>
+            <span className="absolute -bottom-4 right-7 block w-0 h-0 border-l-[11px] border-l-transparent border-r-[11px] border-r-transparent border-t-[13px]" style={{ borderTopColor: '#3D2C29' }} />
+            <span className="absolute -bottom-[7px] right-[31px] block w-0 h-0 border-l-[8px] border-l-transparent border-r-[8px] border-r-transparent border-t-[10px] border-t-white" />
+          </div>
           <button
             onClick={() => document.getElementById('cv-import-input')?.click()}
             className="bg-warm text-espresso px-6 py-3 rounded-full shadow-lg hover:bg-mocha hover:text-cream transition-all flex items-center gap-2 font-medium"
