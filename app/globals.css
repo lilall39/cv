@@ -47,9 +47,9 @@
     flex-direction: row !important;
     page-break-inside: avoid !important;
     break-inside: avoid !important;
-    min-height: 297mm !important;
+    /* 349mm × 0.85 ≈ 297mm pour remplir la page */
+    min-height: 349mm !important;
     height: auto !important;
-    max-height: 297mm !important;
     overflow: hidden !important;
     border: 2px solid #8B7B6F !important;
     border-top: 2px solid #8B7B6F !important;
@@ -62,6 +62,7 @@
     max-width: 15rem !important;
     flex: 0 0 15rem !important;
     order: 1 !important;
+    align-self: stretch !important;
   }
   /* Colonne droite = large (Poste, Profil, Expériences) */
   #cv-card main {

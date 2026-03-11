@@ -5,8 +5,9 @@ alwaysApply: true
 
 # Déploiement Vercel
 
-Après chaque modification du code dans ce projet :
-1. `git add -A && git commit -m "Message descriptif" && git push origin main`
-2. Les déploiements Vercel se déclenchent automatiquement via GitHub
+**À faire automatiquement** après chaque modification de code, sans que l'utilisateur le demande :
 
-Ne pas oublier de pousser : le projet est déployé sur Vercel.
+1. `git add -A && git commit -m "Message descriptif" && git push origin main`
+2. `vercel --prod` (déploiement direct sur Vercel)
+
+Vercel se déclenche aussi via GitHub, mais exécuter `vercel --prod` assure un déploiement immédiat.
