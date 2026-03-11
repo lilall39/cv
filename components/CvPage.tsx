@@ -322,7 +322,7 @@ export default function CvPage() {
     }
     const html2pdf = (await import('html2pdf.js')).default
     const opt = {
-      margin: [2, 8, 8, 8] as [number, number, number, number],
+      margin: 10,
       filename: `cv-${(data.header?.name || 'mon-cv').replace(/\s+/g, '-')}.pdf`,
       image: { type: 'jpeg' as const, quality: 0.98 },
       html2canvas: { scale: 2, useCORS: true, letterRendering: true, logging: false },
