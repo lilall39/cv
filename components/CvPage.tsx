@@ -5,13 +5,12 @@ import { useCvData } from '@/lib/useCvData'
 import { Modal } from './Modal'
 import { ResizeHandle } from './ResizeHandle'
 import type { Experience } from '@/types/cv'
-import { DEFAULT_DATA, PALETTES } from '@/types/cv'
+import { PALETTES } from '@/types/cv'
 
 export default function CvPage() {
   const {
     data,
     mounted,
-    saveData,
     updateHeader,
     updateProfile,
     addExperience,
@@ -306,92 +305,22 @@ export default function CvPage() {
     )
   }, [data.colors, openModal, closeModal, updateColors])
 
-  const exportCvData = useCallback(() => {
-    const blob = new Blob([JSON.stringify(data, null, 2)], {
-      type: 'application/json',
-    })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = `cv-${data.header.name.replace(/\s+/g, '-') || 'mon-cv'}.json`
-    a.click()
-    URL.revokeObjectURL(url)
-  }, [data])
-
-  const importCvData = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const file = e.target.files?.[0]
-      if (!file) return
-      const reader = new FileReader()
-      reader.onload = () => {
-        try {
-          const parsed = JSON.parse(reader.result as string)
-          if (parsed?.header && Array.isArray(parsed?.experiences)) {
-            const merged = {
-              ...DEFAULT_DATA,
-              ...parsed,
-              header: { ...DEFAULT_DATA.header, ...parsed.header },
-              experiences: parsed.experiences,
-              sectionOrder: parsed.sectionOrder || ['header', 'profile', 'experience'],
-              colors: { ...DEFAULT_DATA.colors, ...parsed.colors },
-            }
-            saveData(merged)
-          } else {
-            alert('Fichier invalide. Utilisez un fichier exporté par cette application.')
-          }
-        } catch {
-          alert('Fichier invalide. Utilisez un fichier exporté par cette application.')
-        }
-      }
-      reader.readAsText(file)
-      e.target.value = ''
-    },
-    [saveData]
-  )
-
   const exportPDF = useCallback(async () => {
     if (typeof window === 'undefined') return
+    const html2pdf = (await import('html2pdf.js')).default
+    document.body.classList.add('export-pdf')
     const element = document.getElementById('cv-content')
     if (!element) return
-    document.body.classList.add('export-pdf')
-    window.scrollTo(0, 0)
-    await document.fonts.ready
-    await new Promise((r) => setTimeout(r, 300))
-    try {
-      const mod = await import('html2pdf.js')
-      const html2pdf = mod.default
-      const filename = `cv-${data.header.name.replace(/\s+/g, '-') || 'mon-cv'}.pdf`
-      await html2pdf()
-        .set({
-          margin: 6,
-          filename,
-          image: { type: 'jpeg', quality: 0.95 },
-          html2canvas: { scale: 1.5, useCORS: true },
-          jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-          pagebreak: { mode: ['avoid-all', 'css', 'legacy'] },
-        })
-        .from(element)
-        .save()
-    } catch {
-      const w = window.open('', '_blank')
-      if (w) {
-        const clone = element.cloneNode(true) as HTMLElement
-        clone.querySelectorAll('.no-print').forEach((n) => n.remove())
-        w.document.write(`
-<!DOCTYPE html><html><head><meta charset="UTF-8">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
-<style>body{font-family:Outfit,sans-serif;margin:0;padding:20px;background:#fff;color:#3D2C29}.no-print{display:none!important}</style>
-</head><body>${clone.outerHTML}</body></html>`)
-        w.document.close()
-        w.focus()
-        setTimeout(() => { w.print(); w.close() }, 500)
-      } else {
-        window.print()
-      }
-    } finally {
-      document.body.classList.remove('export-pdf')
+    const opt = {
+      margin: 10,
+      filename: 'mon-cv.pdf',
+      image: { type: 'jpeg' as const, quality: 0.98 },
+      html2canvas: { scale: 2 },
+      jsPDF: { unit: 'mm' as const, format: 'a4' as const, orientation: 'portrait' as const },
     }
-  }, [data.header.name])
+    await html2pdf().set(opt).from(element).save()
+    document.body.classList.remove('export-pdf')
+  }, [])
 
   const togglePreview = useCallback(() => {
     const iframe = iframeRef.current
@@ -703,71 +632,52 @@ export default function CvPage() {
         title="Aperçu du CV"
       />
 
-      <div className="no-print fixed bottom-6 left-6 flex flex-col gap-2 z-30 items-start">
-        <button
-          onClick={editColors}
-          className="bg-warm text-espresso px-6 py-3 rounded-full shadow-lg hover:bg-mocha hover:text-cream transition-all flex items-center gap-2 font-medium"
-        >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2V5a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
-          </svg>
-          Couleurs
-        </button>
+      <ScrollIndicators previewMode={previewMode} />
+
+      <div className="no-print fixed bottom-6 right-6 flex flex-col gap-3">
         <button
           onClick={togglePreview}
           className="bg-warm text-espresso px-6 py-3 rounded-full shadow-lg hover:bg-mocha hover:text-cream transition-all flex items-center gap-2 font-medium"
         >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+          <svg
+            className="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+            />
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+            />
           </svg>
           Aperçu
         </button>
-      </div>
-
-      <input
-        type="file"
-        accept=".json,application/json"
-        onChange={importCvData}
-        className="hidden"
-        id="cv-import-input"
-      />
-      <div className="no-print fixed bottom-6 right-6 flex flex-col gap-3">
-        <div className="relative flex flex-col items-end">
-          <div className="mb-2 px-4 py-3 text-sm bg-white text-espresso rounded-[1.5rem] border-[3px] border-espresso shadow-xl w-56 text-right relative z-50 leading-relaxed">
-            Sauvegardez les données avec « Sauvegarder les données », ouvrez le fichier ici pour modifier.
-            <span className="absolute -bottom-4 right-7 block w-0 h-0 border-l-[11px] border-l-transparent border-r-[11px] border-r-transparent border-t-[13px]" style={{ borderTopColor: '#3D2C29' }} />
-            <span className="absolute -bottom-[7px] right-[31px] block w-0 h-0 border-l-[8px] border-l-transparent border-r-[8px] border-r-transparent border-t-[10px] border-t-white" />
-          </div>
-          <button
-            onClick={() => document.getElementById('cv-import-input')?.click()}
-            className="bg-warm text-espresso px-6 py-3 rounded-full shadow-lg hover:bg-mocha hover:text-cream transition-all flex items-center gap-2 font-medium"
-            title="Réimporter un CV enregistré"
-          >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-            </svg>
-            Importer
-          </button>
-        </div>
         <button
           onClick={exportPDF}
           className="bg-espresso text-cream px-6 py-3 rounded-full shadow-lg hover:bg-mocha transition-all flex items-center gap-2 font-medium"
         >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+          <svg
+            className="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+            />
           </svg>
-          Enregistrer
-        </button>
-        <button
-          onClick={exportCvData}
-          className="bg-warm text-espresso px-6 py-3 rounded-full shadow-lg hover:bg-mocha hover:text-cream transition-all flex items-center gap-2 font-medium"
-          title="Sauvegarder les données pour réimporter plus tard"
-        >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-          </svg>
-          Sauvegarder les données
+          Exporter en PDF
         </button>
         <button
           onClick={() => window.print()}
@@ -787,6 +697,25 @@ export default function CvPage() {
             />
           </svg>
           Imprimer
+        </button>
+        <button
+          onClick={editColors}
+          className="bg-warm text-espresso px-6 py-3 rounded-full shadow-lg hover:bg-mocha hover:text-cream transition-all flex items-center gap-2 font-medium"
+        >
+          <svg
+            className="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2V5a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"
+            />
+          </svg>
+          Couleurs
         </button>
       </div>
 
@@ -876,6 +805,66 @@ function ExperienceCard({
             </svg>
           </button>
         </div>
+      </div>
+    </div>
+  )
+}
+
+function ScrollIndicators({ previewMode }: { previewMode: boolean }) {
+  const [scrollPct, setScrollPct] = useState(0)
+  const [fillPct, setFillPct] = useState(0)
+
+  useEffect(() => {
+    const updateScroll = () => {
+      if (previewMode) return
+      const maxScroll = document.documentElement.scrollHeight - window.innerHeight
+      const pct = maxScroll <= 0 ? 100 : Math.round((window.scrollY / maxScroll) * 100)
+      setScrollPct(pct)
+    }
+    const updateFill = () => {
+      if (previewMode) return
+      const card = document.getElementById('cv-card')
+      if (!card) return
+      const h = card.offsetHeight
+      const a4Px = 297 * (96 / 25.4)
+      const pct = Math.round((h / a4Px) * 100)
+      setFillPct(pct)
+    }
+    updateScroll()
+    updateFill()
+    window.addEventListener('scroll', updateScroll, { passive: true })
+    window.addEventListener('resize', () => {
+      updateScroll()
+      updateFill()
+    })
+    const card = document.getElementById('cv-card')
+    if (card && typeof ResizeObserver !== 'undefined') {
+      const ro = new ResizeObserver(() => {
+        updateScroll()
+        updateFill()
+      })
+      ro.observe(card)
+      return () => ro.disconnect()
+    }
+  }, [previewMode])
+
+  if (previewMode) return null
+
+  return (
+    <div className="no-print fixed bottom-6 left-6 flex flex-col gap-2 z-30">
+      <div
+        className="px-3 py-2 rounded-full bg-espresso/90 text-cream text-sm font-medium shadow-lg"
+        aria-label="Position de défilement"
+        title="Où vous regardez dans la page"
+      >
+        Scroll: {scrollPct}%
+      </div>
+      <div
+        className="px-3 py-2 rounded-full bg-mocha/90 text-cream text-sm font-medium shadow-lg"
+        aria-label="Page remplie"
+        title="Contenu = % d'une page A4"
+      >
+        Rempli: {fillPct}%
       </div>
     </div>
   )
