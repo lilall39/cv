@@ -351,24 +351,46 @@ export default function CvPage() {
 
   const exportPDF = useCallback(async () => {
     if (typeof window === 'undefined') return
-    const html2pdf = (await import('html2pdf.js')).default
-    document.body.classList.add('export-pdf')
     const element = document.getElementById('cv-content')
     if (!element) return
-    const filename = `cv-${data.header.name.replace(/\s+/g, '-') || 'mon-cv'}.pdf`
-    const opt = {
-      margin: 8,
-      filename,
-      image: { type: 'jpeg' as const, quality: 0.98 },
-      html2canvas: {
-        scale: 2,
-        useCORS: true,
-        logging: false,
-      },
-      jsPDF: { unit: 'mm' as const, format: 'a4' as const, orientation: 'portrait' as const },
+    document.body.classList.add('export-pdf')
+    window.scrollTo(0, 0)
+    await document.fonts.ready
+    await new Promise((r) => setTimeout(r, 300))
+    try {
+      const mod = await import('html2pdf.js')
+      const html2pdf = mod.default
+      const filename = `cv-${data.header.name.replace(/\s+/g, '-') || 'mon-cv'}.pdf`
+      await html2pdf()
+        .set({
+          margin: 6,
+          filename,
+          image: { type: 'jpeg', quality: 0.95 },
+          html2canvas: { scale: 1.5, useCORS: true },
+          jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+          pagebreak: { mode: ['avoid-all', 'css', 'legacy'] },
+        })
+        .from(element)
+        .save()
+    } catch {
+      const w = window.open('', '_blank')
+      if (w) {
+        const clone = element.cloneNode(true) as HTMLElement
+        clone.querySelectorAll('.no-print').forEach((n) => n.remove())
+        w.document.write(`
+<!DOCTYPE html><html><head><meta charset="UTF-8">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>body{font-family:Outfit,sans-serif;margin:0;padding:20px;background:#fff;color:#3D2C29}.no-print{display:none!important}</style>
+</head><body>${clone.outerHTML}</body></html>`)
+        w.document.close()
+        w.focus()
+        setTimeout(() => { w.print(); w.close() }, 500)
+      } else {
+        window.print()
+      }
+    } finally {
+      document.body.classList.remove('export-pdf')
     }
-    await html2pdf().set(opt).from(element).save()
-    document.body.classList.remove('export-pdf')
   }, [data.header.name])
 
   const togglePreview = useCallback(() => {
