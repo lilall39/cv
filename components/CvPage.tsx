@@ -370,7 +370,7 @@ export default function CvPage() {
       <div
         id="cv-content"
         ref={cvContentRef}
-        className="w-full max-w-[900px] px-4 max-h-[calc(100vh-4rem)] overflow-y-auto"
+        className="w-full max-w-[900px] px-4"
         style={{ background: bgMain }}
       >
         <div id="cv-card" className="flex flex-col lg:flex-row gap-0 rounded-2xl overflow-hidden shadow-lg">
