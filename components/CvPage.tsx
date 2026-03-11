@@ -355,16 +355,21 @@ export default function CvPage() {
     document.body.classList.add('export-pdf')
     const element = document.getElementById('cv-content')
     if (!element) return
+    const filename = `cv-${data.header.name.replace(/\s+/g, '-') || 'mon-cv'}.pdf`
     const opt = {
-      margin: 10,
-      filename: 'mon-cv.pdf',
+      margin: 8,
+      filename,
       image: { type: 'jpeg' as const, quality: 0.98 },
-      html2canvas: { scale: 2 },
+      html2canvas: {
+        scale: 2,
+        useCORS: true,
+        logging: false,
+      },
       jsPDF: { unit: 'mm' as const, format: 'a4' as const, orientation: 'portrait' as const },
     }
     await html2pdf().set(opt).from(element).save()
     document.body.classList.remove('export-pdf')
-  }, [])
+  }, [data.header.name])
 
   const togglePreview = useCallback(() => {
     const iframe = iframeRef.current
@@ -708,7 +713,7 @@ export default function CvPage() {
       <div className="no-print fixed bottom-6 right-6 flex flex-col gap-3">
         <div className="relative flex flex-col items-end">
           <div className="mb-2 px-4 py-3 text-sm bg-white text-espresso rounded-[1.5rem] border-[3px] border-espresso shadow-xl w-56 text-right relative z-50 leading-relaxed">
-            Enregistrez votre CV, ouvrez-le sur l&apos;application pour pouvoir le modifier.
+            Sauvegardez les données avec « Sauvegarder les données », ouvrez le fichier ici pour modifier.
             <span className="absolute -bottom-4 right-7 block w-0 h-0 border-l-[11px] border-l-transparent border-r-[11px] border-r-transparent border-t-[13px]" style={{ borderTopColor: '#3D2C29' }} />
             <span className="absolute -bottom-[7px] right-[31px] block w-0 h-0 border-l-[8px] border-l-transparent border-r-[8px] border-r-transparent border-t-[10px] border-t-white" />
           </div>
@@ -724,8 +729,8 @@ export default function CvPage() {
           </button>
         </div>
         <button
-          onClick={exportCvData}
-          className="bg-warm text-espresso px-6 py-3 rounded-full shadow-lg hover:bg-mocha hover:text-cream transition-all flex items-center gap-2 font-medium"
+          onClick={exportPDF}
+          className="bg-espresso text-cream px-6 py-3 rounded-full shadow-lg hover:bg-mocha transition-all flex items-center gap-2 font-medium"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
@@ -733,23 +738,14 @@ export default function CvPage() {
           Enregistrer
         </button>
         <button
-          onClick={exportPDF}
-          className="bg-espresso text-cream px-6 py-3 rounded-full shadow-lg hover:bg-mocha transition-all flex items-center gap-2 font-medium"
+          onClick={exportCvData}
+          className="bg-warm text-espresso px-6 py-3 rounded-full shadow-lg hover:bg-mocha hover:text-cream transition-all flex items-center gap-2 font-medium"
+          title="Sauvegarder les données pour réimporter plus tard"
         >
-          <svg
-            className="w-5 h-5"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-            />
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
           </svg>
-          Exporter en PDF
+          Sauvegarder les données
         </button>
         <button
           onClick={() => window.print()}
