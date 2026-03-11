@@ -323,7 +323,7 @@ export default function CvPage() {
     const html = `<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8"><title>CV - ${(data.header?.name || 'mon-cv').replace(/</g, '&lt;')}</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdn.tailwindcss.com"><\/script>
-<script>tailwind.config={theme:{extend:{colors:{cream:'#F5F0E8',sand:'#E8E2D8',warm:'#D4C4B0',espresso:'#3D2C29',mocha:'#8B7B6F',oat:'#FAF8F5'},fontFamily:{display:['Cormorant Garamond'],body:['Outfit']}}}}<\/script>
+<script>tailwind.config={theme:{extend:{colors:{cream:'#F5F0E8',sand:'#E8E2D8',warm:'#D4C4B0',espresso:'#3D2C29',mocha:'#5C4A47',oat:'#FAF8F5'},fontFamily:{display:['Cormorant Garamond'],body:['Outfit']}}}}<\/script>
 <style>
 body{font-family:Outfit,sans-serif;background:#fff;color:#3D2C29;margin:0;padding:1rem;min-height:100%}
 .section-body{overflow:visible!important}
@@ -355,7 +355,7 @@ body{font-family:Outfit,sans-serif;background:#fff;color:#3D2C29;margin:0;paddin
           clone.querySelectorAll('.no-print').forEach((el) => el.remove())
           const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><script src="https://cdn.tailwindcss.com"><\/script>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
-<script>tailwind.config={theme:{extend:{colors:{cream:'#F5F0E8',sand:'#E8E2D8',warm:'#D4C4B0',espresso:'#3D2C29',mocha:'#8B7B6F',oat:'#FAF8F5'},fontFamily:{display:['Cormorant Garamond'],body:['Outfit']}}}}<\/script>
+<script>tailwind.config={theme:{extend:{colors:{cream:'#F5F0E8',sand:'#E8E2D8',warm:'#D4C4B0',espresso:'#3D2C29',mocha:'#5C4A47',oat:'#FAF8F5'},fontFamily:{display:['Cormorant Garamond'],body:['Outfit']}}}}<\/script>
 <style>body{font-family:Outfit,sans-serif;background:#F5F0E8;color:#3D2C29;margin:0;padding:2rem;min-height:100%}.section-body{overflow:visible!important}#body-skills{overflow:visible!important;max-height:none!important}#cv-content{border:none!important;box-shadow:none!important}#cv-sidebar{border-right:2px solid #8B7B6F!important;box-shadow:none!important}#cv-card{border:2px solid #8B7B6F!important;box-shadow:none!important}</style></head>
 <body>${clone.outerHTML}</body></html>`
           iframe.srcdoc = html
