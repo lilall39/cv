@@ -31,7 +31,7 @@
     border: 2px solid #5C4A47 !important;
   }
   #cv-sidebar {
-    border: none !important;
+    border-right: 2px solid #5C4A47 !important;
   }
   .card-hover:hover {
     transform: none !important;
@@ -56,7 +56,7 @@
   box-shadow: none !important;
 }
 .export-pdf #cv-sidebar {
-  border: none !important;
+  border-right: 2px solid #5C4A47 !important;
   box-shadow: none !important;
 }
 
@@ -150,6 +150,6 @@ body.preview-mode #cv-content {
   filter: none !important;
 }
 #cv-sidebar {
-  border: none !important;
+  border-right: 2px solid #5C4A47 !important;
   box-shadow: none !important;
 }
