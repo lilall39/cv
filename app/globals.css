@@ -88,6 +88,9 @@
   #cv-card main .leading-relaxed {
     line-height: 1.5 !important;
   }
+  #body-profile p {
+    font-size: 16px !important;
+  }
   .card-hover:hover {
     transform: none !important;
   }
