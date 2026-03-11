@@ -366,14 +366,14 @@ export default function CvPage() {
   const bgMain = data.colors?.main ?? '#FAF8F5'
 
   return (
-    <div className="min-h-screen" style={{ background: bgMain }}>
+    <div className="min-h-screen flex flex-col items-center py-8 md:py-12" style={{ background: bgMain }}>
       <div
         id="cv-content"
         ref={cvContentRef}
-        className="w-full max-w-[900px] mx-auto px-4 py-8 md:py-12"
+        className="w-full max-w-[900px] px-4 max-h-[calc(100vh-4rem)] overflow-y-auto"
         style={{ background: bgMain }}
       >
-        <div id="cv-card" className="flex flex-col lg:flex-row gap-0 rounded-2xl overflow-hidden">
+        <div id="cv-card" className="flex flex-col lg:flex-row gap-0 rounded-2xl overflow-hidden shadow-lg">
           <aside
             id="cv-sidebar"
             className="lg:w-60 shrink-0 text-espresso p-6 md:p-8 order-2 lg:order-1"
