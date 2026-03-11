@@ -738,7 +738,7 @@ function ExperienceCard({
 }) {
   return (
     <div
-      className="rounded-xl pl-4 pr-2 pt-4 pb-0 card-hover transition-transform no-print-exp"
+      className="rounded-xl pl-4 pr-2 pt-6 pb-0 card-hover transition-transform no-print-exp"
       data-id={exp.id}
     >
       <div className="flex justify-between items-start gap-4">
