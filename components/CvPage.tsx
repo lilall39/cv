@@ -486,42 +486,42 @@ export default function CvPage() {
 
           <main className="flex-1 pt-2 px-6 pb-6 md:pt-3 md:px-8 md:pb-8 lg:pt-4 lg:px-10 lg:pb-10 min-w-0 order-1 lg:order-2 min-h-full bg-white">
             <div id="main-sections" className="space-y-6 min-h-full rounded-r-2xl bg-white">
-              <header
-                id="section-header"
-                data-section="header"
-                className="relative pb-0 mb-0 -mb-24"
-                style={{ background: data.colors?.experienceCard ?? '#F5F0E8' }}
-              >
-                <div className="flex items-center justify-center gap-2 flex-wrap w-full mt-2">
-                  <p className="font-display text-2xl md:text-3xl font-bold text-espresso capitalize">
-                    {data.header.jobTitle || 'Poste recherché'}
-                  </p>
-                  <button
-                    onClick={editJobTitle}
-                    className="no-print text-sm text-mocha hover:text-espresso underline transition-colors"
-                  >
-                    Modifier
-                  </button>
-                </div>
-              </header>
+              <div style={{ background: data.colors?.experienceCard ?? '#F5F0E8' }} className="rounded-t-xl overflow-hidden">
+                <header
+                  id="section-header"
+                  data-section="header"
+                  className="relative pb-0 mb-0 -mb-24"
+                >
+                  <div className="flex items-center justify-center gap-2 flex-wrap w-full mt-2">
+                    <p className="font-display text-2xl md:text-3xl font-bold text-espresso capitalize">
+                      {data.header.jobTitle || 'Poste recherché'}
+                    </p>
+                    <button
+                      onClick={editJobTitle}
+                      className="no-print text-sm text-mocha hover:text-espresso underline transition-colors"
+                    >
+                      Modifier
+                    </button>
+                  </div>
+                </header>
 
-              <section
-                id="section-profile"
-                data-section="profile"
-                className="section-card group relative -mt-48"
-                style={{ background: data.colors?.experienceCard ?? '#F5F0E8' }}
-              >
-                <div id="body-profile" className="section-body" style={{ background: data.colors?.experienceCard ?? '#F5F0E8' }}>
-                  <p className="text-mocha leading-relaxed text-[14px]">{data.profile}</p>
-                  <button
-                    onClick={editProfile}
-                    className="no-print mt-2 text-sm text-mocha hover:text-espresso underline transition-colors"
-                  >
-                    Modifier
-                  </button>
-                </div>
-                <ResizeHandle sectionId="profile" onResize={setSectionHeight} />
-              </section>
+                <section
+                  id="section-profile"
+                  data-section="profile"
+                  className="section-card group relative -mt-48"
+                >
+                  <div id="body-profile" className="section-body">
+                    <p className="text-mocha leading-relaxed text-[14px]">{data.profile}</p>
+                    <button
+                      onClick={editProfile}
+                      className="no-print mt-2 text-sm text-mocha hover:text-espresso underline transition-colors"
+                    >
+                      Modifier
+                    </button>
+                  </div>
+                  <ResizeHandle sectionId="profile" onResize={setSectionHeight} />
+                </section>
+              </div>
 
               <section
                 id="section-experience"
