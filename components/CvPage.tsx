@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { useCallback, useEffect, useRef, useState } from 'react'
 
 function capitalizeFirstOnly(str: string): string {
@@ -8,7 +9,6 @@ function capitalizeFirstOnly(str: string): string {
 }
 import { useCvData } from '@/lib/useCvData'
 import { Modal } from './Modal'
-import { ResizeHandle } from './ResizeHandle'
 import type { Experience } from '@/types/cv'
 import { DEFAULT_DATA, PALETTES } from '@/types/cv'
 
@@ -27,7 +27,6 @@ export default function CvPage() {
     updateColors,
     moveSectionUp,
     moveSectionDown,
-    setSectionHeight,
     resetToDefault,
     saveData,
   } = useCvData()
@@ -109,16 +108,37 @@ export default function CvPage() {
     URL.revokeObjectURL(url)
   }, [data])
 
+  const exportPDF = useCallback(() => {
+    if (typeof window === 'undefined') return
+    const cleanup = () => document.body.classList.remove('export-pdf')
+    window.addEventListener('afterprint', cleanup, { once: true })
+    window.scrollTo(0, 0)
+    document.body.classList.add('export-pdf')
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => window.print())
+    })
+  }, [])
+
   const handleNewCvYes = useCallback(() => {
-    downloadCvJson()
-    resetToDefault()
     setShowNewCvConfirm(false)
-  }, [downloadCvJson, resetToDefault])
+    const onAfterPrint = () => {
+      resetToDefault()
+      window.removeEventListener('afterprint', onAfterPrint)
+    }
+    window.addEventListener('afterprint', onAfterPrint)
+    exportPDF()
+  }, [exportPDF, resetToDefault])
 
   const handleNewCvNo = useCallback(() => {
     resetToDefault()
     setShowNewCvConfirm(false)
   }, [resetToDefault])
+
+  const handleNewCvDownloadData = useCallback(() => {
+    downloadCvJson()
+    resetToDefault()
+    setShowNewCvConfirm(false)
+  }, [downloadCvJson, resetToDefault])
 
   const handleImportClick = useCallback(() => {
     importInputRef.current?.click()
@@ -128,28 +148,63 @@ export default function CvPage() {
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const file = e.target.files?.[0]
       if (!file) return
+      if (!file.name.toLowerCase().endsWith('.json')) {
+        alert('Sélectionnez un fichier .json (obtenu via "Télécharger (.json)"), pas un PDF.')
+        e.target.value = ''
+        return
+      }
       const reader = new FileReader()
       reader.onload = () => {
         try {
-          const parsed = JSON.parse(reader.result as string) as Record<string, unknown>
+          let text = (reader.result as string) || ''
+          if (text.charCodeAt(0) === 0xFEFF) text = text.slice(1)
+          const parsed = JSON.parse(text)
+          if (!parsed || typeof parsed !== 'object') throw new Error('Format invalide')
+          const p = parsed as Record<string, unknown>
+          const safeExperiences = Array.isArray(p.experiences)
+            ? p.experiences.map((exp: unknown, i: number) => {
+                const e = (exp && typeof exp === 'object' ? exp : {}) as Record<string, unknown>
+                return {
+                  id: typeof e.id === 'string' ? e.id : `exp-${Date.now()}-${i}`,
+                  title: String(e.title ?? ''),
+                  company: String(e.company ?? ''),
+                  location: String(e.location ?? ''),
+                  startYear: String(e.startYear ?? ''),
+                  endYear: String(e.endYear ?? ''),
+                  description: String(e.description ?? ''),
+                }
+              })
+            : DEFAULT_DATA.experiences
           const merged = {
             ...DEFAULT_DATA,
-            header: { ...DEFAULT_DATA.header, ...(parsed?.header as object || {}) },
-            profile: typeof parsed?.profile === 'string' ? parsed.profile : DEFAULT_DATA.profile,
-            experiences: Array.isArray(parsed?.experiences) ? parsed.experiences : DEFAULT_DATA.experiences,
-            education: typeof parsed?.education === 'string' ? parsed.education : DEFAULT_DATA.education,
-            skills: Array.isArray(parsed?.skills) ? parsed.skills : DEFAULT_DATA.skills,
-            interests: typeof parsed?.interests === 'string' ? parsed.interests : DEFAULT_DATA.interests,
-            sectionOrder: Array.isArray(parsed?.sectionOrder) ? parsed.sectionOrder : DEFAULT_DATA.sectionOrder,
-            sectionHeights: (parsed?.sectionHeights && typeof parsed.sectionHeights === 'object') ? parsed.sectionHeights as Record<string, number | null> : {},
-            colors: (parsed?.colors && typeof parsed.colors === 'object') ? { ...DEFAULT_DATA.colors, ...parsed.colors } : DEFAULT_DATA.colors,
+            header: {
+              name: String(p.header?.name ?? DEFAULT_DATA.header.name),
+              jobTitle: String(p.header?.jobTitle ?? DEFAULT_DATA.header.jobTitle),
+              address: String(p.header?.address ?? DEFAULT_DATA.header.address),
+              email: String(p.header?.email ?? DEFAULT_DATA.header.email),
+              phone: String(p.header?.phone ?? DEFAULT_DATA.header.phone),
+            },
+            profile: String(p.profile ?? DEFAULT_DATA.profile),
+            experiences: safeExperiences,
+            education: String(p.education ?? DEFAULT_DATA.education),
+            skills: Array.isArray(p.skills) ? p.skills.map((s: unknown) => String(s ?? '')) : DEFAULT_DATA.skills,
+            interests: String(p.interests ?? DEFAULT_DATA.interests),
+            sectionOrder: Array.isArray(p.sectionOrder) ? p.sectionOrder : DEFAULT_DATA.sectionOrder,
+            sectionHeights: (p.sectionHeights && typeof p.sectionHeights === 'object' && !Array.isArray(p.sectionHeights))
+              ? (p.sectionHeights as Record<string, number | null>)
+              : {},
+            colors: {
+              sidebar: String(p.colors?.sidebar ?? DEFAULT_DATA.colors.sidebar),
+              main: String(p.colors?.main ?? DEFAULT_DATA.colors.main),
+              experienceCard: String(p.colors?.experienceCard ?? DEFAULT_DATA.colors.experienceCard),
+            },
           }
           saveData(merged)
-        } catch {
-          alert('Fichier invalide. Choisissez un fichier JSON exporté par cette application.')
+        } catch (err) {
+          alert('Fichier invalide. Assurez-vous de sélectionner un fichier .json téléchargé via "Télécharger (.json)".')
         }
       }
-      reader.readAsText(file)
+      reader.readAsText(file, 'UTF-8')
       e.target.value = ''
     },
     [saveData]
@@ -376,17 +431,6 @@ export default function CvPage() {
     )
   }, [data.colors, openModal, closeModal, updateColors])
 
-  const exportPDF = useCallback(() => {
-    if (typeof window === 'undefined') return
-    const cleanup = () => document.body.classList.remove('export-pdf')
-    window.addEventListener('afterprint', cleanup, { once: true })
-    window.scrollTo(0, 0)
-    document.body.classList.add('export-pdf')
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => window.print())
-    })
-  }, [])
-
   const togglePreview = useCallback(() => {
     const iframe = iframeRef.current
     setPreviewMode((prev) => {
@@ -431,7 +475,7 @@ export default function CvPage() {
   const bgMain = data.colors?.main ?? '#FAF8F5'
 
   return (
-    <div className="min-h-screen flex flex-col items-center py-8 md:py-12" style={{ background: bgMain }}>
+    <div className="min-h-screen flex flex-col items-center py-4 md:py-6" style={{ background: bgMain }}>
       <div
         id="cv-content"
         ref={cvContentRef}
@@ -483,7 +527,6 @@ export default function CvPage() {
                   Modifier
                 </button>
               </div>
-              <ResizeHandle sectionId="contact" onResize={setSectionHeight} />
             </div>
 
             <div className="mb-10 relative">
@@ -528,7 +571,6 @@ export default function CvPage() {
                   Modifier
                 </button>
               </div>
-              <ResizeHandle sectionId="formation" onResize={setSectionHeight} />
             </div>
 
             <div className="relative">
@@ -544,11 +586,10 @@ export default function CvPage() {
                   Modifier
                 </button>
               </div>
-              <ResizeHandle sectionId="interests" onResize={setSectionHeight} />
             </div>
           </aside>
 
-          <main className="flex-1 pt-6 px-6 pb-6 md:pt-8 md:px-8 md:pb-8 lg:pt-8 lg:px-10 lg:pb-10 min-w-0 order-1 lg:order-2 min-h-full bg-white">
+          <main className="flex-1 pt-0 px-6 pb-6 md:px-8 md:pb-8 lg:px-10 lg:pb-10 min-w-0 order-1 lg:order-2 min-h-full bg-white">
             <div id="main-sections" className="space-y-6 min-h-full bg-white">
               <div style={{ background: data.colors?.experienceCard ?? '#F5F0E8' }} className="overflow-hidden">
                 <header
@@ -556,7 +597,7 @@ export default function CvPage() {
                   data-section="header"
                   className="relative pb-0 mb-0 -mb-24"
                 >
-                  <div className="flex items-center justify-center gap-2 flex-wrap w-full mt-2">
+                  <div className="flex items-center justify-center gap-2 flex-wrap w-full">
                     <p className="font-display text-2xl md:text-3xl font-bold text-espresso">
                       {capitalizeFirstOnly(data.header.jobTitle || 'Poste recherché')}
                     </p>
@@ -583,7 +624,6 @@ export default function CvPage() {
                       Modifier
                     </button>
                   </div>
-                  <ResizeHandle sectionId="profile" onResize={setSectionHeight} />
                 </section>
               </div>
 
@@ -696,136 +736,129 @@ export default function CvPage() {
         title="Aperçu du CV"
       />
 
-      <ScrollIndicators previewMode={previewMode} />
+      <ScrollIndicators previewMode={previewMode} onEditColors={editColors} onTogglePreview={togglePreview} />
 
-      <div className="no-print fixed bottom-6 right-6 flex flex-col gap-3">
-        <button
-          onClick={() => setShowNewCvConfirm(true)}
-          className="bg-sand text-espresso px-6 py-3 rounded-full shadow-lg hover:bg-warm hover:text-mocha transition-all flex items-center gap-2 font-medium"
-        >
-          <svg
-            className="w-5 h-5"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
+      <div className="no-print fixed top-4 right-6 bottom-6 flex flex-col justify-between items-start z-30">
+        <div className="flex flex-col gap-2">
+          <Link
+            href="/"
+            className="text-sm text-mocha hover:text-espresso transition-colors"
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M12 4v16m8-8H4"
+            ← Accueil
+          </Link>
+          <div className="relative group">
+          <button
+            onClick={() => setShowNewCvConfirm(true)}
+            className="bg-[#E8A598] text-espresso px-6 py-3 rounded-full shadow-lg hover:bg-[#E09586] transition-all flex items-center gap-2 font-medium shrink-0"
+          >
+            <svg
+              className="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 4v16m8-8H4"
+              />
+            </svg>
+            Nouveau CV
+          </button>
+          <div className="absolute left-0 top-full mt-2 hidden group-hover:block z-40 w-56 p-3 rounded-xl bg-espresso text-cream text-sm shadow-lg">
+            Créez un nouveau CV. Vous pourrez sauvegarder le CV actuel au format PDF avant de continuer.
+          </div>
+        </div>
+        </div>
+        <div className="flex flex-col gap-3">
+          <button
+            onClick={exportPDF}
+            className="bg-green-500 text-white px-6 py-3 rounded-full shadow-lg hover:bg-green-600 transition-all flex items-center gap-2 font-medium"
+          >
+            <svg
+              className="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+              />
+            </svg>
+            Télécharger en PDF
+          </button>
+          <button
+            onClick={() => window.print()}
+            className="bg-green-500 text-white px-6 py-3 rounded-full shadow-lg hover:bg-green-600 transition-all flex items-center gap-2 font-medium"
+          >
+            <svg
+              className="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"
+              />
+            </svg>
+            Imprimer
+          </button>
+        </div>
+        <div className="flex flex-col gap-3">
+          <button
+            onClick={downloadCvJson}
+            className="bg-blue-500 text-white px-6 py-3 rounded-full shadow-lg hover:bg-blue-600 transition-all flex items-center justify-center gap-2 font-medium w-[210px]"
+            title="Sauvegarde un fichier .json pour importer plus tard"
+          >
+            <svg
+              className="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+              />
+            </svg>
+            <span className="text-left leading-tight block">Télécharger les données du CV<br />(pour réutilisation<br />sur l&apos;appli)</span>
+          </button>
+          <button
+            onClick={handleImportClick}
+            className="bg-blue-500 text-white px-6 py-3 rounded-full shadow-lg hover:bg-blue-600 transition-all flex items-center justify-center gap-2 font-medium w-[210px] text-center"
+            title="Charger un CV depuis un fichier .json"
+          >
+            <svg
+              className="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"
             />
           </svg>
-          Nouveau CV
-        </button>
-        <button
-          onClick={handleImportClick}
-          className="bg-sand text-espresso px-6 py-3 rounded-full shadow-lg hover:bg-warm hover:text-mocha transition-all flex items-center gap-2 font-medium"
-        >
-          <svg
-            className="w-5 h-5"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"
-            />
-          </svg>
-          Importer
+          <span className="leading-tight block">Importer vos données d&apos;un CV<br />sauvegardé sur l&apos;appli</span>
         </button>
         <input
           ref={importInputRef}
           type="file"
-          accept=".json"
           className="hidden"
           onChange={handleImportFile}
         />
-        <button
-          onClick={togglePreview}
-          className="bg-warm text-espresso px-6 py-3 rounded-full shadow-lg hover:bg-mocha hover:text-cream transition-all flex items-center gap-2 font-medium"
-        >
-          <svg
-            className="w-5 h-5"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-            />
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-            />
-          </svg>
-          Aperçu
-        </button>
-        <button
-          onClick={exportPDF}
-          className="bg-espresso text-cream px-6 py-3 rounded-full shadow-lg hover:bg-mocha transition-all flex items-center gap-2 font-medium"
-        >
-          <svg
-            className="w-5 h-5"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-            />
-          </svg>
-          Exporter en PDF
-        </button>
-        <button
-          onClick={() => window.print()}
-          className="bg-warm text-espresso px-6 py-3 rounded-full shadow-lg hover:bg-mocha hover:text-cream transition-all flex items-center gap-2 font-medium"
-        >
-          <svg
-            className="w-5 h-5"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"
-            />
-          </svg>
-          Imprimer
-        </button>
-        <button
-          onClick={editColors}
-          className="bg-warm text-espresso px-6 py-3 rounded-full shadow-lg hover:bg-mocha hover:text-cream transition-all flex items-center gap-2 font-medium"
-        >
-          <svg
-            className="w-5 h-5"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2V5a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"
-            />
-          </svg>
-          Couleurs
-        </button>
+        </div>
       </div>
 
       {modal && (
@@ -851,7 +884,13 @@ export default function CvPage() {
                 onClick={handleNewCvYes}
                 className="w-full py-2.5 rounded-xl bg-espresso text-cream hover:bg-mocha transition-colors"
               >
-                Oui, sauvegarder
+                Oui, télécharger en PDF
+              </button>
+              <button
+                onClick={handleNewCvDownloadData}
+                className="w-full py-2.5 rounded-xl border border-espresso text-espresso hover:bg-sand transition-colors"
+              >
+                Oui, télécharger vos données (pour réutilisation sur l&apos;appli)
               </button>
               <button
                 onClick={handleNewCvNo}
@@ -951,62 +990,55 @@ function ExperienceCard({
   )
 }
 
-function ScrollIndicators({ previewMode }: { previewMode: boolean }) {
-  const [scrollPct, setScrollPct] = useState(0)
-  const [fillPct, setFillPct] = useState(0)
-
-  useEffect(() => {
-    const updateScroll = () => {
-      if (previewMode) return
-      const maxScroll = document.documentElement.scrollHeight - window.innerHeight
-      const pct = maxScroll <= 0 ? 100 : Math.round((window.scrollY / maxScroll) * 100)
-      setScrollPct(pct)
-    }
-    const updateFill = () => {
-      if (previewMode) return
-      const card = document.getElementById('cv-card')
-      if (!card) return
-      const h = card.offsetHeight
-      const a4Px = 297 * (96 / 25.4)
-      const pct = Math.round((h / a4Px) * 100)
-      setFillPct(pct)
-    }
-    updateScroll()
-    updateFill()
-    window.addEventListener('scroll', updateScroll, { passive: true })
-    window.addEventListener('resize', () => {
-      updateScroll()
-      updateFill()
-    })
-    const card = document.getElementById('cv-card')
-    if (card && typeof ResizeObserver !== 'undefined') {
-      const ro = new ResizeObserver(() => {
-        updateScroll()
-        updateFill()
-      })
-      ro.observe(card)
-      return () => ro.disconnect()
-    }
-  }, [previewMode])
-
+function ScrollIndicators({ previewMode, onEditColors, onTogglePreview }: { previewMode: boolean; onEditColors: () => void; onTogglePreview: () => void }) {
   if (previewMode) return null
 
   return (
-    <div className="no-print fixed bottom-6 left-6 flex flex-col gap-2 z-30">
-      <div
-        className="px-3 py-2 rounded-full bg-espresso/90 text-cream text-sm font-medium shadow-lg"
-        aria-label="Position de défilement"
-        title="Où vous regardez dans la page"
+    <div className="no-print fixed top-10 left-6 flex flex-col gap-2 z-30">
+      <button
+        onClick={onTogglePreview}
+        className="bg-yellow-400 text-espresso px-6 py-3 rounded-full shadow-lg hover:bg-yellow-500 transition-all flex items-center gap-2 font-medium w-fit"
       >
-        Scroll: {scrollPct}%
-      </div>
-      <div
-        className="px-3 py-2 rounded-full bg-mocha/90 text-cream text-sm font-medium shadow-lg"
-        aria-label="Page remplie"
-        title="Contenu = % d'une page A4"
+        <svg
+          className="w-5 h-5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+          />
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+          />
+        </svg>
+        Aperçu
+      </button>
+      <button
+        onClick={onEditColors}
+        className="bg-yellow-400 text-espresso px-6 py-3 rounded-full shadow-lg hover:bg-yellow-500 transition-all flex items-center gap-2 font-medium w-fit"
       >
-        Rempli: {fillPct}%
-      </div>
+        <svg
+          className="w-5 h-5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2V5a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"
+          />
+        </svg>
+        Couleurs
+      </button>
     </div>
   )
 }
