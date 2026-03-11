@@ -145,10 +145,19 @@ export function useCvData() {
     [saveData]
   )
 
+  const resetToDefault = useCallback(() => {
+    const fresh = JSON.parse(JSON.stringify(DEFAULT_DATA))
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(fresh))
+    }
+    setData(fresh)
+  }, [])
+
   return {
     data,
     mounted,
     saveData,
+    resetToDefault,
     updateHeader,
     updateProfile,
     addExperience,

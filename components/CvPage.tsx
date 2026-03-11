@@ -28,6 +28,7 @@ export default function CvPage() {
     moveSectionUp,
     moveSectionDown,
     setSectionHeight,
+    resetToDefault,
   } = useCvData()
 
   const [modal, setModal] = useState<{
@@ -35,6 +36,7 @@ export default function CvPage() {
     content: React.ReactNode
     onSave: () => void
   } | null>(null)
+  const [showNewCvConfirm, setShowNewCvConfirm] = useState(false)
   const [previewMode, setPreviewMode] = useState(false)
   const iframeRef = useRef<HTMLIFrameElement>(null)
   const cvContentRef = useRef<HTMLDivElement>(null)
@@ -92,6 +94,29 @@ export default function CvPage() {
   )
 
   const closeModal = useCallback(() => setModal(null), [])
+
+  const downloadCvJson = useCallback(() => {
+    const blob = new Blob([JSON.stringify(data, null, 2)], {
+      type: 'application/json',
+    })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `cv-${new Date().toISOString().slice(0, 10)}.json`
+    a.click()
+    URL.revokeObjectURL(url)
+  }, [data])
+
+  const handleNewCvYes = useCallback(() => {
+    downloadCvJson()
+    resetToDefault()
+    setShowNewCvConfirm(false)
+  }, [downloadCvJson, resetToDefault])
+
+  const handleNewCvNo = useCallback(() => {
+    resetToDefault()
+    setShowNewCvConfirm(false)
+  }, [resetToDefault])
 
   const editJobTitle = useCallback(() => {
     openModal(
@@ -638,6 +663,25 @@ export default function CvPage() {
 
       <div className="no-print fixed bottom-6 right-6 flex flex-col gap-3">
         <button
+          onClick={() => setShowNewCvConfirm(true)}
+          className="bg-sand text-espresso px-6 py-3 rounded-full shadow-lg hover:bg-warm hover:text-mocha transition-all flex items-center gap-2 font-medium"
+        >
+          <svg
+            className="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M12 4v16m8-8H4"
+            />
+          </svg>
+          Nouveau CV
+        </button>
+        <button
           onClick={togglePreview}
           className="bg-warm text-espresso px-6 py-3 rounded-full shadow-lg hover:bg-mocha hover:text-cream transition-all flex items-center gap-2 font-medium"
         >
@@ -729,6 +773,38 @@ export default function CvPage() {
         >
           {modal.content}
         </Modal>
+      )}
+      {showNewCvConfirm && (
+        <div
+          className="fixed inset-0 bg-espresso/50 flex items-center justify-center z-50 p-4"
+          onClick={(e) => e.target === e.currentTarget && setShowNewCvConfirm(false)}
+        >
+          <div className="bg-oat rounded-2xl shadow-2xl max-w-md w-full p-6">
+            <p className="text-espresso mb-6">
+              Sauvegarder le CV actuel avant de continuer ?
+            </p>
+            <div className="flex flex-col gap-2">
+              <button
+                onClick={handleNewCvYes}
+                className="w-full py-2.5 rounded-xl bg-espresso text-cream hover:bg-mocha transition-colors"
+              >
+                Oui, sauvegarder
+              </button>
+              <button
+                onClick={handleNewCvNo}
+                className="w-full py-2.5 rounded-xl border border-mocha text-mocha hover:bg-sand transition-colors"
+              >
+                Non, continuer
+              </button>
+              <button
+                onClick={() => setShowNewCvConfirm(false)}
+                className="w-full py-2.5 rounded-xl text-mocha hover:bg-sand transition-colors"
+              >
+                Annuler
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   )
