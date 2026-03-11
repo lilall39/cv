@@ -725,7 +725,7 @@ export default function CvPage() {
           </svg>
           Importer
           <span className="absolute bottom-full right-0 mb-2 px-3 py-2 text-xs bg-espresso text-cream rounded-lg opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity w-56 text-right shadow-lg z-50">
-            Réimporter un CV précédemment enregistré : sélectionnez le fichier téléchargé avec « Enregistrer ». Utile pour retrouver votre CV sur un autre appareil.
+            Enregistrez votre CV, ouvrez-le sur l&apos;application pour pouvoir le modifier.
           </span>
         </button>
         <button
