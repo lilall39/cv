@@ -321,7 +321,7 @@ export default function CvPage() {
     const main = el.querySelector('main')
     if (main) (main as HTMLElement).scrollTop = 0
     await document.fonts.ready
-    await new Promise((r) => setTimeout(r, 400))
+    await new Promise((r) => setTimeout(r, 500))
     try {
       const html2pdf = (await import('html2pdf.js')).default
       await html2pdf()
@@ -334,6 +334,9 @@ export default function CvPage() {
         })
         .from(el)
         .save()
+    } catch (err) {
+      console.error('Erreur export PDF:', err)
+      window.print()
     } finally {
       document.body.classList.remove('export-pdf')
     }
@@ -632,7 +635,7 @@ export default function CvPage() {
 
       <div
         id="preview-banner"
-        className={`preview-banner ${previewMode ? '' : 'hidden'}`}
+        className={`no-print preview-banner ${previewMode ? '' : 'hidden'}`}
       >
         Aperçu du CV —{' '}
         <button className="preview-close" onClick={togglePreview}>
