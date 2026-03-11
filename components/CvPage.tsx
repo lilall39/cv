@@ -482,7 +482,7 @@ export default function CvPage() {
           </aside>
 
           <main className="flex-1 pt-2 px-6 pb-6 md:pt-3 md:px-8 md:pb-8 lg:pt-4 lg:px-10 lg:pb-10 min-w-0 order-1 lg:order-2">
-            <div id="main-sections" className="space-y-6">
+            <div id="main-sections" className="space-y-6 min-h-full rounded-r-2xl" style={{ background: data.colors?.experienceCard ?? '#F5F0E8' }}>
               <header
                 id="section-header"
                 data-section="header"
