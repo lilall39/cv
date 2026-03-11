@@ -399,7 +399,7 @@ body{font-family:Outfit,sans-serif;background:#fff;color:#3D2C29;margin:0;paddin
             id="cv-sidebar"
             className="lg:w-60 shrink-0 text-espresso p-6 md:p-8 order-2 lg:order-1"
           >
-            <div className="mb-10 relative">
+            <div className="mb-10 mt-20 relative">
               <div id="body-contact" className="section-body">
                 <div className="mb-4">
                   <div className="flex items-center gap-2 mb-1 flex-wrap">
