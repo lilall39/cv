@@ -373,7 +373,7 @@ export default function CvPage() {
         className="w-full max-w-[900px] px-4"
         style={{ background: bgMain }}
       >
-        <div id="cv-card" className="flex flex-col lg:flex-row gap-0 rounded-2xl overflow-hidden shadow-lg">
+        <div id="cv-card" className="flex flex-col lg:flex-row gap-0 overflow-hidden">
           <aside
             id="cv-sidebar"
             className="lg:w-60 shrink-0 text-espresso p-6 md:p-8 order-2 lg:order-1"
@@ -485,8 +485,8 @@ export default function CvPage() {
           </aside>
 
           <main className="flex-1 pt-2 px-6 pb-6 md:pt-3 md:px-8 md:pb-8 lg:pt-4 lg:px-10 lg:pb-10 min-w-0 order-1 lg:order-2 min-h-full bg-white">
-            <div id="main-sections" className="space-y-6 min-h-full rounded-r-2xl bg-white">
-              <div style={{ background: data.colors?.experienceCard ?? '#F5F0E8' }} className="rounded-t-xl overflow-hidden">
+            <div id="main-sections" className="space-y-6 min-h-full bg-white">
+              <div style={{ background: data.colors?.experienceCard ?? '#F5F0E8' }} className="overflow-hidden">
                 <header
                   id="section-header"
                   data-section="header"

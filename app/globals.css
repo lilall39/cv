@@ -115,12 +115,7 @@ body.preview-mode #cv-content {
 }
 
 #cv-card {
-  border: 2px solid rgba(92, 74, 71, 0.35);
-  box-shadow: 0 0 0 1px rgba(212, 196, 176, 0.6), 0 25px 50px -12px rgba(61, 44, 41, 0.15);
   width: 900px;
   max-width: 100%;
   min-height: 297mm;
-}
-#cv-sidebar {
-  border-right: 2px solid rgba(92, 74, 71, 0.35);
 }
