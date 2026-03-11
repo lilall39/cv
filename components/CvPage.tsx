@@ -884,16 +884,9 @@ function ExperienceCard({
 }
 
 function ScrollIndicators({ previewMode }: { previewMode: boolean }) {
-  const [scrollPct, setScrollPct] = useState(0)
   const [fillPct, setFillPct] = useState(0)
 
   useEffect(() => {
-    const updateScroll = () => {
-      if (previewMode) return
-      const maxScroll = document.documentElement.scrollHeight - window.innerHeight
-      const pct = maxScroll <= 0 ? 100 : Math.round((window.scrollY / maxScroll) * 100)
-      setScrollPct(pct)
-    }
     const updateFill = () => {
       if (previewMode) return
       const card = document.getElementById('cv-card')
@@ -903,19 +896,11 @@ function ScrollIndicators({ previewMode }: { previewMode: boolean }) {
       const pct = Math.round((h / a4Px) * 100)
       setFillPct(pct)
     }
-    updateScroll()
     updateFill()
-    window.addEventListener('scroll', updateScroll, { passive: true })
-    window.addEventListener('resize', () => {
-      updateScroll()
-      updateFill()
-    })
+    window.addEventListener('resize', updateFill)
     const card = document.getElementById('cv-card')
     if (card && typeof ResizeObserver !== 'undefined') {
-      const ro = new ResizeObserver(() => {
-        updateScroll()
-        updateFill()
-      })
+      const ro = new ResizeObserver(updateFill)
       ro.observe(card)
       return () => ro.disconnect()
     }
@@ -925,13 +910,6 @@ function ScrollIndicators({ previewMode }: { previewMode: boolean }) {
 
   return (
     <div className="no-print fixed bottom-6 left-6 flex flex-col gap-2 z-30">
-      <div
-        className="px-3 py-2 rounded-full bg-espresso/90 text-cream text-sm font-medium shadow-lg"
-        aria-label="Position de défilement"
-        title="Où vous regardez dans la page"
-      >
-        Scroll: {scrollPct}%
-      </div>
       <div
         className="px-3 py-2 rounded-full bg-mocha/90 text-cream text-sm font-medium shadow-lg"
         aria-label="Page remplie"
