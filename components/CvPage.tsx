@@ -363,12 +363,15 @@ export default function CvPage() {
     )
   }
 
+  const bgMain = data.colors?.main ?? '#FAF8F5'
+
   return (
-    <>
+    <div className="min-h-screen" style={{ background: bgMain }}>
       <div
         id="cv-content"
         ref={cvContentRef}
         className="w-full max-w-[900px] mx-auto px-4 py-8 md:py-12"
+        style={{ background: bgMain }}
       >
         <div id="cv-card" className="flex flex-col lg:flex-row gap-0 rounded-2xl overflow-hidden">
           <aside
@@ -481,7 +484,7 @@ export default function CvPage() {
             </div>
           </aside>
 
-          <main className="flex-1 pt-2 px-6 pb-6 md:pt-3 md:px-8 md:pb-8 lg:pt-4 lg:px-10 lg:pb-10 min-w-0 order-1 lg:order-2">
+          <main className="flex-1 pt-2 px-6 pb-6 md:pt-3 md:px-8 md:pb-8 lg:pt-4 lg:px-10 lg:pb-10 min-w-0 order-1 lg:order-2 min-h-full" style={{ background: data.colors?.experienceCard ?? '#F5F0E8' }}>
             <div id="main-sections" className="space-y-6 min-h-full rounded-r-2xl" style={{ background: data.colors?.experienceCard ?? '#F5F0E8' }}>
               <header
                 id="section-header"
@@ -723,7 +726,7 @@ export default function CvPage() {
           {modal.content}
         </Modal>
       )}
-    </>
+    </div>
   )
 }
 
