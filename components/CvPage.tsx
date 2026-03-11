@@ -414,7 +414,7 @@ body{font-family:Outfit,sans-serif;background:#fff;color:#3D2C29;margin:0;paddin
                     </button>
                   </div>
                 </div>
-                <h2 className="font-display text-sm font-bold uppercase tracking-wider text-black mb-4">
+                <h2 className="font-display text-sm font-bold uppercase tracking-wider text-[#000] mb-4">
                   Contact
                 </h2>
                 <div className="space-y-3 text-sm text-espresso">
@@ -443,7 +443,7 @@ body{font-family:Outfit,sans-serif;background:#fff;color:#3D2C29;margin:0;paddin
             </div>
 
             <div className="mb-10 relative">
-              <h2 className="font-display text-sm font-bold uppercase tracking-wider text-black mb-4">
+              <h2 className="font-display text-sm font-bold uppercase tracking-wider text-[#000] mb-4">
                 Compétences
               </h2>
               <div id="body-skills" className="section-body">
@@ -467,7 +467,7 @@ body{font-family:Outfit,sans-serif;background:#fff;color:#3D2C29;margin:0;paddin
             </div>
 
             <div className="mb-10 relative">
-              <h2 className="font-display text-sm font-bold uppercase tracking-wider text-black mb-4">
+              <h2 className="font-display text-sm font-bold uppercase tracking-wider text-[#000] mb-4">
                 Formation
               </h2>
               <div id="body-formation" className="section-body">
@@ -488,7 +488,7 @@ body{font-family:Outfit,sans-serif;background:#fff;color:#3D2C29;margin:0;paddin
             </div>
 
             <div className="relative">
-              <h2 className="font-display text-sm font-bold uppercase tracking-wider text-black mb-4">
+              <h2 className="font-display text-sm font-bold uppercase tracking-wider text-[#000] mb-4">
                 Centres d&apos;intérêt
               </h2>
               <div id="body-interests" className="section-body">
