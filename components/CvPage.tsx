@@ -398,7 +398,7 @@ export default function CvPage() {
             id="cv-sidebar"
             className="lg:w-60 shrink-0 text-espresso p-6 md:p-8 order-2 lg:order-1"
           >
-            <div className="mb-8 relative">
+            <div className="mb-10 relative">
               <div id="body-contact" className="section-body">
                 <div className="mb-4">
                   <div className="flex items-center gap-2 mb-1 flex-wrap">
@@ -441,7 +441,7 @@ export default function CvPage() {
               <ResizeHandle sectionId="contact" onResize={setSectionHeight} />
             </div>
 
-            <div className="mb-8 relative">
+            <div className="mb-10 relative">
               <h2 className="font-display text-sm font-bold uppercase tracking-wider text-black mb-4">
                 Compétences
               </h2>
@@ -465,7 +465,7 @@ export default function CvPage() {
               </div>
             </div>
 
-            <div className="mb-8 relative">
+            <div className="mb-10 relative">
               <h2 className="font-display text-sm font-bold uppercase tracking-wider text-black mb-4">
                 Formation
               </h2>
