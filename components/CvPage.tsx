@@ -524,7 +524,7 @@ export default function CvPage() {
                 className="section-card group relative -mt-20"
               >
                 <div className="flex items-center justify-between gap-2 mb-1 mt-2">
-                  <h2 className="font-display text-xl font-extrabold text-black pb-2 border-b-2 border-warm flex-1">
+                  <h2 className="font-display text-xl font-extrabold text-black pt-2 pb-2 border-t-2 border-b-2 border-warm flex-1">
                     Expérience professionnelle
                   </h2>
                   <div className="flex no-print opacity-60 hover:opacity-100 transition-opacity">
