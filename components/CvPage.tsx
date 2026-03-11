@@ -527,7 +527,6 @@ export default function CvPage() {
                 id="section-experience"
                 data-section="experience"
                 className="section-card group relative -mt-20"
-                style={{ background: data.colors?.experienceCard ?? '#F5F0E8' }}
               >
                 <div className="flex items-center justify-between gap-2 mb-1 mt-2">
                   <h2 className="font-display text-xl font-extrabold text-black pt-2 pb-2 border-t-2 border-b-2 border-gray-300 flex-1">
@@ -574,7 +573,7 @@ export default function CvPage() {
                     </button>
                   </div>
                 </div>
-                <div id="body-experience" className="section-body" style={{ background: data.colors?.experienceCard ?? '#F5F0E8' }}>
+                <div id="body-experience" className="section-body">
                   <div id="experiences-container" className="space-y-0 -mt-4">
                     {data.experiences.map((exp) => (
                       <ExperienceCard
