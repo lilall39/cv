@@ -309,36 +309,37 @@ export default function CvPage() {
     )
   }, [data.colors, openModal, closeModal, updateColors])
 
-  const exportPDF = useCallback(async () => {
+  const exportPDF = useCallback(() => {
     if (typeof window === 'undefined') return
-    window.scrollTo(0, 0)
-    document.body.classList.add('export-pdf')
-    const el = document.getElementById('cv-content')
-    if (!el) {
-      document.body.classList.remove('export-pdf')
+    const cvContent = document.getElementById('cv-content')
+    if (!cvContent) return
+    const clone = cvContent.cloneNode(true) as HTMLElement
+    clone.querySelectorAll('.no-print').forEach((el) => el.remove())
+    const printWindow = window.open('', '_blank')
+    if (!printWindow) {
+      window.print()
       return
     }
-    const main = el.querySelector('main')
-    if (main) (main as HTMLElement).scrollTop = 0
-    await document.fonts.ready
-    await new Promise((r) => setTimeout(r, 500))
-    try {
-      const html2pdf = (await import('html2pdf.js')).default
-      await html2pdf()
-        .set({
-          margin: 0,
-          filename: `cv-${(data.header?.name || 'mon-cv').replace(/\s+/g, '-')}.pdf`,
-          image: { type: 'jpeg', quality: 0.98 },
-          html2canvas: { scale: 2 },
-          jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-        })
-        .from(el)
-        .save()
-    } catch (err) {
-      console.error('Erreur export PDF:', err)
-      window.print()
-    } finally {
-      document.body.classList.remove('export-pdf')
+    const html = `<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8"><title>CV - ${(data.header?.name || 'mon-cv').replace(/</g, '&lt;')}</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"><\/script>
+<script>tailwind.config={theme:{extend:{colors:{cream:'#F5F0E8',sand:'#E8E2D8',warm:'#D4C4B0',espresso:'#3D2C29',mocha:'#8B7B6F',oat:'#FAF8F5'},fontFamily:{display:['Cormorant Garamond'],body:['Outfit']}}}}<\/script>
+<style>
+body{font-family:Outfit,sans-serif;background:#fff;color:#3D2C29;margin:0;padding:1rem;min-height:100%}
+.section-body{overflow:visible!important}
+#body-skills{overflow:visible!important;max-height:none!important}
+#cv-content{border:none!important;box-shadow:none!important}#cv-sidebar{border-right:2px solid #8B7B6F!important;box-shadow:none!important}#cv-card{border:2px solid #8B7B6F!important;box-shadow:none!important}
+@media print{@page{size:A4;margin:10mm}body{padding:0;background:#fff}}
+<\/style></head>
+<body>${clone.outerHTML}</body></html>`
+    printWindow.document.write(html)
+    printWindow.document.close()
+    printWindow.onload = () => {
+      setTimeout(() => {
+        printWindow.focus()
+        printWindow.print()
+        printWindow.onafterprint = () => printWindow.close()
+      }, 250)
     }
   }, [data.header?.name])
 
@@ -354,8 +355,8 @@ export default function CvPage() {
           clone.querySelectorAll('.no-print').forEach((el) => el.remove())
           const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><script src="https://cdn.tailwindcss.com"><\/script>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
-<script>tailwind.config={theme:{extend:{colors:{cream:'#F5F0E8',sand:'#E8E2D8',warm:'#D4C4B0',espresso:'#3D2C29',mocha:'#5C4A47',oat:'#FAF8F5'},fontFamily:{display:['Cormorant Garamond'],body:['Outfit']},screens:{a4:'794px'}}}}<\/script>
-<style>body{font-family:Outfit,sans-serif;background:#F5F0E8;color:#3D2C29;margin:0;padding:2rem;min-height:100%;display:flex;justify-content:center;align-items:flex-start}.section-body{overflow:visible!important}#body-skills{overflow:visible!important;max-height:none!important}#cv-content{width:210mm;max-width:210mm;border:none!important;box-shadow:none!important}#cv-card{width:210mm;min-height:297mm;max-height:297mm;padding:10mm;box-sizing:border-box;border:2px solid #C4A574!important;box-shadow:none!important;overflow:hidden}#cv-sidebar{flex:0 0 60mm;width:60mm;border-right:2px solid #C4A574!important}</style></head>
+<script>tailwind.config={theme:{extend:{colors:{cream:'#F5F0E8',sand:'#E8E2D8',warm:'#D4C4B0',espresso:'#3D2C29',mocha:'#8B7B6F',oat:'#FAF8F5'},fontFamily:{display:['Cormorant Garamond'],body:['Outfit']}}}}<\/script>
+<style>body{font-family:Outfit,sans-serif;background:#F5F0E8;color:#3D2C29;margin:0;padding:2rem;min-height:100%}.section-body{overflow:visible!important}#body-skills{overflow:visible!important;max-height:none!important}#cv-content{border:none!important;box-shadow:none!important}#cv-sidebar{border-right:2px solid #8B7B6F!important;box-shadow:none!important}#cv-card{border:2px solid #8B7B6F!important;box-shadow:none!important}</style></head>
 <body>${clone.outerHTML}</body></html>`
           iframe.srcdoc = html
         }
@@ -386,17 +387,17 @@ export default function CvPage() {
   const bgMain = data.colors?.main ?? '#FAF8F5'
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center py-8 md:py-12 px-4" style={{ background: bgMain }}>
+    <div className="min-h-screen flex flex-col items-center py-8 md:py-12" style={{ background: bgMain }}>
       <div
         id="cv-content"
         ref={cvContentRef}
-        className="w-[210mm] max-w-full mx-auto shadow-none shrink-0"
+        className="w-full max-w-[900px] pl-4 pr-0 shadow-none"
         style={{ background: bgMain }}
       >
-        <div id="cv-card" className="flex flex-col a4:flex-row gap-0 overflow-hidden shadow-none min-h-[297mm] max-h-[297mm] w-[210mm] p-[10mm] box-border">
+        <div id="cv-card" className="flex flex-col lg:flex-row gap-0 overflow-hidden shadow-none">
           <aside
             id="cv-sidebar"
-            className="a4:w-[60mm] shrink-0 text-espresso p-4 a4:pr-4 order-2 a4:order-1"
+            className="lg:w-60 shrink-0 text-espresso p-6 md:p-8 order-2 lg:order-1"
           >
             <div className="mb-10 mt-20 relative">
               <div id="body-contact" className="section-body">
@@ -413,7 +414,7 @@ export default function CvPage() {
                     </button>
                   </div>
                 </div>
-                <h2 className="font-display text-sm font-bold uppercase tracking-wider text-[#000] mb-4">
+                <h2 className="font-display text-sm font-bold uppercase tracking-wider text-black mb-4">
                   Contact
                 </h2>
                 <div className="space-y-3 text-sm text-espresso">
@@ -442,7 +443,7 @@ export default function CvPage() {
             </div>
 
             <div className="mb-10 relative">
-              <h2 className="font-display text-sm font-bold uppercase tracking-wider text-[#000] mb-4">
+              <h2 className="font-display text-sm font-bold uppercase tracking-wider text-black mb-4">
                 Compétences
               </h2>
               <div id="body-skills" className="section-body">
@@ -466,7 +467,7 @@ export default function CvPage() {
             </div>
 
             <div className="mb-10 relative">
-              <h2 className="font-display text-sm font-bold uppercase tracking-wider text-[#000] mb-4">
+              <h2 className="font-display text-sm font-bold uppercase tracking-wider text-black mb-4">
                 Formation
               </h2>
               <div id="body-formation" className="section-body">
@@ -487,7 +488,7 @@ export default function CvPage() {
             </div>
 
             <div className="relative">
-              <h2 className="font-display text-sm font-bold uppercase tracking-wider text-[#000] mb-4">
+              <h2 className="font-display text-sm font-bold uppercase tracking-wider text-black mb-4">
                 Centres d&apos;intérêt
               </h2>
               <div id="body-interests" className="section-body">
@@ -503,7 +504,7 @@ export default function CvPage() {
             </div>
           </aside>
 
-          <main className="flex-1 pt-4 px-4 pb-4 a4:pt-0 a4:pl-6 a4:pr-2 a4:pb-0 min-w-0 order-1 a4:order-2 min-h-0 overflow-y-auto bg-white">
+          <main className="flex-1 pt-6 px-6 pb-6 md:pt-8 md:px-8 md:pb-8 lg:pt-8 lg:px-10 lg:pb-10 min-w-0 order-1 lg:order-2 min-h-full bg-white">
             <div id="main-sections" className="space-y-6 min-h-full bg-white">
               <div style={{ background: data.colors?.experienceCard ?? '#F5F0E8' }} className="overflow-hidden">
                 <header
@@ -635,7 +636,7 @@ export default function CvPage() {
 
       <div
         id="preview-banner"
-        className={`no-print preview-banner ${previewMode ? '' : 'hidden'}`}
+        className={`preview-banner ${previewMode ? '' : 'hidden'}`}
       >
         Aperçu du CV —{' '}
         <button className="preview-close" onClick={togglePreview}>

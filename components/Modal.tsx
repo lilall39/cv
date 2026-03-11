@@ -10,7 +10,7 @@ interface ModalProps {
 export function Modal({ title, children, onClose, onSave }: ModalProps) {
   return (
     <div
-      className="no-print fixed inset-0 bg-espresso/50 flex items-center justify-center z-50 p-4"
+      className="fixed inset-0 bg-espresso/50 flex items-center justify-center z-50 p-4"
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
       <div className="bg-oat rounded-2xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
