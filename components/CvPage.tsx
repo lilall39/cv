@@ -744,10 +744,10 @@ function ExperienceCard({
       <div className="flex justify-between items-start gap-4">
         <div className="flex-1 min-w-0">
           <div className="flex justify-between items-baseline gap-4">
-            <h3 className="font-display text-xl font-semibold text-espresso leading-tight">
+            <h3 className="font-display text-xl font-semibold text-mocha leading-tight">
               {(exp.title || '').trim()}
             </h3>
-            <span className="text-base text-espresso font-medium shrink-0 mr-0">
+            <span className="text-base text-mocha font-medium shrink-0 mr-0">
               {(exp.startYear || '').trim()} - {(exp.endYear || '').trim()}
             </span>
           </div>
