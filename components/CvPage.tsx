@@ -490,6 +490,7 @@ export default function CvPage() {
                 id="section-header"
                 data-section="header"
                 className="relative pb-0 mb-0 -mb-24"
+                style={{ background: data.colors?.experienceCard ?? '#F5F0E8' }}
               >
                 <div className="flex items-center justify-center gap-2 flex-wrap w-full mt-2">
                   <p className="font-display text-2xl md:text-3xl font-bold text-espresso capitalize">
@@ -508,8 +509,9 @@ export default function CvPage() {
                 id="section-profile"
                 data-section="profile"
                 className="section-card group relative -mt-48"
+                style={{ background: data.colors?.experienceCard ?? '#F5F0E8' }}
               >
-                <div id="body-profile" className="section-body">
+                <div id="body-profile" className="section-body" style={{ background: data.colors?.experienceCard ?? '#F5F0E8' }}>
                   <p className="text-mocha leading-relaxed text-[14px]">{data.profile}</p>
                   <button
                     onClick={editProfile}
@@ -525,6 +527,7 @@ export default function CvPage() {
                 id="section-experience"
                 data-section="experience"
                 className="section-card group relative -mt-20"
+                style={{ background: data.colors?.experienceCard ?? '#F5F0E8' }}
               >
                 <div className="flex items-center justify-between gap-2 mb-1 mt-2">
                   <h2 className="font-display text-xl font-extrabold text-black pt-2 pb-2 border-t-2 border-b-2 border-gray-300 flex-1">
@@ -571,7 +574,7 @@ export default function CvPage() {
                     </button>
                   </div>
                 </div>
-                <div id="body-experience" className="section-body">
+                <div id="body-experience" className="section-body" style={{ background: data.colors?.experienceCard ?? '#F5F0E8' }}>
                   <div id="experiences-container" className="space-y-0 -mt-4">
                     {data.experiences.map((exp) => (
                       <ExperienceCard
