@@ -488,7 +488,7 @@ export default function CvPage() {
                 data-section="header"
                 className="relative pb-0 mb-0 -mb-24"
               >
-                <div className="flex items-center justify-center gap-2 flex-wrap w-full mt-4">
+                <div className="flex items-center justify-center gap-2 flex-wrap w-full mt-2">
                   <p className="font-display text-2xl md:text-3xl font-bold text-espresso capitalize">
                     {data.header.jobTitle || 'Poste recherché'}
                   </p>
