@@ -10,7 +10,7 @@ import { useCvData } from '@/lib/useCvData'
 import { Modal } from './Modal'
 import { ResizeHandle } from './ResizeHandle'
 import type { Experience } from '@/types/cv'
-import { PALETTES } from '@/types/cv'
+import { DEFAULT_DATA, PALETTES } from '@/types/cv'
 
 export default function CvPage() {
   const {
@@ -29,6 +29,7 @@ export default function CvPage() {
     moveSectionDown,
     setSectionHeight,
     resetToDefault,
+    saveData,
   } = useCvData()
 
   const [modal, setModal] = useState<{
@@ -40,6 +41,7 @@ export default function CvPage() {
   const [previewMode, setPreviewMode] = useState(false)
   const iframeRef = useRef<HTMLIFrameElement>(null)
   const cvContentRef = useRef<HTMLDivElement>(null)
+  const importInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     const c = data.colors || {
@@ -117,6 +119,41 @@ export default function CvPage() {
     resetToDefault()
     setShowNewCvConfirm(false)
   }, [resetToDefault])
+
+  const handleImportClick = useCallback(() => {
+    importInputRef.current?.click()
+  }, [])
+
+  const handleImportFile = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0]
+      if (!file) return
+      const reader = new FileReader()
+      reader.onload = () => {
+        try {
+          const parsed = JSON.parse(reader.result as string) as Record<string, unknown>
+          const merged = {
+            ...DEFAULT_DATA,
+            header: { ...DEFAULT_DATA.header, ...(parsed?.header as object || {}) },
+            profile: typeof parsed?.profile === 'string' ? parsed.profile : DEFAULT_DATA.profile,
+            experiences: Array.isArray(parsed?.experiences) ? parsed.experiences : DEFAULT_DATA.experiences,
+            education: typeof parsed?.education === 'string' ? parsed.education : DEFAULT_DATA.education,
+            skills: Array.isArray(parsed?.skills) ? parsed.skills : DEFAULT_DATA.skills,
+            interests: typeof parsed?.interests === 'string' ? parsed.interests : DEFAULT_DATA.interests,
+            sectionOrder: Array.isArray(parsed?.sectionOrder) ? parsed.sectionOrder : DEFAULT_DATA.sectionOrder,
+            sectionHeights: (parsed?.sectionHeights && typeof parsed.sectionHeights === 'object') ? parsed.sectionHeights as Record<string, number | null> : {},
+            colors: (parsed?.colors && typeof parsed.colors === 'object') ? { ...DEFAULT_DATA.colors, ...parsed.colors } : DEFAULT_DATA.colors,
+          }
+          saveData(merged)
+        } catch {
+          alert('Fichier invalide. Choisissez un fichier JSON exporté par cette application.')
+        }
+      }
+      reader.readAsText(file)
+      e.target.value = ''
+    },
+    [saveData]
+  )
 
   const editJobTitle = useCallback(() => {
     openModal(
@@ -681,6 +718,32 @@ export default function CvPage() {
           </svg>
           Nouveau CV
         </button>
+        <button
+          onClick={handleImportClick}
+          className="bg-sand text-espresso px-6 py-3 rounded-full shadow-lg hover:bg-warm hover:text-mocha transition-all flex items-center gap-2 font-medium"
+        >
+          <svg
+            className="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"
+            />
+          </svg>
+          Importer
+        </button>
+        <input
+          ref={importInputRef}
+          type="file"
+          accept=".json"
+          className="hidden"
+          onChange={handleImportFile}
+        />
         <button
           onClick={togglePreview}
           className="bg-warm text-espresso px-6 py-3 rounded-full shadow-lg hover:bg-mocha hover:text-cream transition-all flex items-center gap-2 font-medium"
