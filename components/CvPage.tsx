@@ -5,12 +5,13 @@ import { useCvData } from '@/lib/useCvData'
 import { Modal } from './Modal'
 import { ResizeHandle } from './ResizeHandle'
 import type { Experience } from '@/types/cv'
-import { PALETTES } from '@/types/cv'
+import { DEFAULT_DATA, PALETTES } from '@/types/cv'
 
 export default function CvPage() {
   const {
     data,
     mounted,
+    saveData,
     updateHeader,
     updateProfile,
     addExperience,
@@ -304,6 +305,49 @@ export default function CvPage() {
       }
     )
   }, [data.colors, openModal, closeModal, updateColors])
+
+  const exportCvData = useCallback(() => {
+    const blob = new Blob([JSON.stringify(data, null, 2)], {
+      type: 'application/json',
+    })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `cv-${data.header.name.replace(/\s+/g, '-') || 'mon-cv'}.json`
+    a.click()
+    URL.revokeObjectURL(url)
+  }, [data])
+
+  const importCvData = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0]
+      if (!file) return
+      const reader = new FileReader()
+      reader.onload = () => {
+        try {
+          const parsed = JSON.parse(reader.result as string)
+          if (parsed?.header && Array.isArray(parsed?.experiences)) {
+            const merged = {
+              ...DEFAULT_DATA,
+              ...parsed,
+              header: { ...DEFAULT_DATA.header, ...parsed.header },
+              experiences: parsed.experiences,
+              sectionOrder: parsed.sectionOrder || ['header', 'profile', 'experience'],
+              colors: { ...DEFAULT_DATA.colors, ...parsed.colors },
+            }
+            saveData(merged)
+          } else {
+            alert('Fichier invalide. Utilisez un fichier JSON exporté par cette application.')
+          }
+        } catch {
+          alert('Fichier invalide. Utilisez un fichier JSON exporté par cette application.')
+        }
+      }
+      reader.readAsText(file)
+      e.target.value = ''
+    },
+    [saveData]
+  )
 
   const exportPDF = useCallback(async () => {
     if (typeof window === 'undefined') return
@@ -634,7 +678,32 @@ export default function CvPage() {
 
       <ScrollIndicators previewMode={previewMode} />
 
+      <input
+        type="file"
+        accept=".json,application/json"
+        onChange={importCvData}
+        className="hidden"
+        id="cv-import-input"
+      />
       <div className="no-print fixed bottom-6 right-6 flex flex-col gap-3">
+        <button
+          onClick={exportCvData}
+          className="bg-warm text-espresso px-6 py-3 rounded-full shadow-lg hover:bg-mocha hover:text-cream transition-all flex items-center gap-2 font-medium"
+        >
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+          </svg>
+          Enregistrer
+        </button>
+        <button
+          onClick={() => document.getElementById('cv-import-input')?.click()}
+          className="bg-warm text-espresso px-6 py-3 rounded-full shadow-lg hover:bg-mocha hover:text-cream transition-all flex items-center gap-2 font-medium"
+        >
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+          </svg>
+          Importer
+        </button>
         <button
           onClick={togglePreview}
           className="bg-warm text-espresso px-6 py-3 rounded-full shadow-lg hover:bg-mocha hover:text-cream transition-all flex items-center gap-2 font-medium"
