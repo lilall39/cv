@@ -39,29 +39,16 @@
 .export-pdf #cv-card {
   display: flex !important;
   flex-direction: row !important;
-  width: 210mm !important;
-  min-height: 297mm !important;
   border: none !important;
   box-shadow: none !important;
 }
 .export-pdf #cv-content {
-  max-width: 210mm !important;
-  width: 210mm !important;
   border: none !important;
   box-shadow: none !important;
 }
 .export-pdf #cv-sidebar {
-  width: 60mm !important;
-  min-width: 60mm !important;
-  flex-shrink: 0 !important;
-  order: 1 !important;
   border: none !important;
   box-shadow: none !important;
-}
-.export-pdf #cv-card > main {
-  flex: 1 !important;
-  min-width: 0 !important;
-  order: 2 !important;
 }
 
 .preview-mode .no-print {
