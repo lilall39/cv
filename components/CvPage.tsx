@@ -457,7 +457,7 @@ export default function CvPage() {
           const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><script src="https://cdn.tailwindcss.com"><\/script>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script>tailwind.config={theme:{extend:{colors:{cream:'#F5F0E8',sand:'#E8E2D8',warm:'#D4C4B0',espresso:'#3D2C29',mocha:'#5C4A47',oat:'#FAF8F5'},fontFamily:{display:['Cormorant Garamond'],body:['Outfit']}}}}<\/script>
-<style>body{font-family:Outfit,sans-serif;background:#F5F0E8;color:#3D2C29;margin:0;padding:2rem;min-height:100%}.section-body{overflow:visible!important}#body-skills{overflow:visible!important;max-height:none!important}#body-skills span{display:block!important;white-space:pre-line!important}#cv-content{border:none!important;box-shadow:none!important}#cv-sidebar{border-right:2px solid #8B7B6F!important;box-shadow:none!important}#cv-sidebar{display:flex!important;flex-direction:column!important;overflow-x:hidden!important;overflow-wrap:break-word!important;min-width:0!important;max-width:240px!important}#cv-sidebar *{overflow-wrap:break-word!important;word-break:break-word!important}#cv-sidebar > *{min-width:0!important;max-width:100%!important}#cv-sidebar>*{flex:0 0 auto!important;min-height:auto!important}#cv-card{border:2px solid #8B7B6F!important;box-shadow:none!important}.hide-in-preview-export{display:none!important}#section-experience{padding-top:0.25rem!important}#section-experience>div:first-child{padding-top:2.25rem!important}#section-experience>div:first-child h2{padding-top:0!important}#body-profile p{margin-top:-1rem!important}</style></head>
+<style>body{font-family:Outfit,sans-serif;background:white;color:#3D2C29;margin:0;padding:0;min-height:100vh;display:flex;justify-content:center;align-items:center}.section-body{overflow:visible!important}#body-skills{overflow:visible!important;max-height:none!important}#body-skills span{display:block!important;white-space:pre-line!important}#cv-content{border:none!important;box-shadow:none!important;width:200mm!important}#cv-sidebar{border-right:2px solid #8B7B6F!important;box-shadow:none!important}#cv-sidebar{display:flex!important;flex-direction:column!important;overflow-x:hidden!important;overflow-wrap:break-word!important;min-width:0!important;max-width:240px!important}#cv-sidebar *{overflow-wrap:break-word!important;word-break:break-word!important}#cv-sidebar > *{min-width:0!important;max-width:100%!important}#cv-sidebar>*{flex:0 0 auto!important;min-height:auto!important}#cv-card{border:2px solid #8B7B6F!important;box-shadow:none!important;width:200mm!important;height:287mm!important;background:white!important}.hide-in-preview-export{display:none!important}#section-experience{padding-top:0.25rem!important}#section-experience>div:first-child{padding-top:2.25rem!important}#section-experience>div:first-child h2{padding-top:0!important}#body-profile p{margin-top:-1rem!important}</style></head>
 <body>${clone.outerHTML}</body></html>`
           iframe.srcdoc = html
         }
@@ -868,7 +868,7 @@ export default function CvPage() {
           Télécharger en PDF
         </button>
         <button
-          onClick={() => window.print()}
+          onClick={exportPDF}
           className="bg-gray-500 text-white px-6 py-3 rounded-full shadow-lg hover:bg-gray-600 transition-all flex items-center gap-2 font-medium"
         >
           <svg

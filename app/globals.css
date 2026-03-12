@@ -12,7 +12,7 @@ html, body {
 @media print {
   @page {
     size: A4;
-    margin: 5mm;
+    margin: 0 !important;
   }
   * {
     -webkit-print-color-adjust: exact !important;
@@ -42,29 +42,32 @@ html, body {
     min-height: 297mm !important;
     max-height: 297mm !important;
     width: 210mm !important;
-    overflow: hidden !important;
     display: flex !important;
     justify-content: center !important;
-    align-items: flex-start !important;
+    align-items: center !important;
+    overflow: hidden !important;
   }
-  /* A4 natif : pas de scale, la colonne droite emplit la largeur */
+  /* A4 natif : centrage parfait avec 5mm de marge tout autour */
   #cv-content {
     padding: 0 !important;
     width: 200mm !important;
     max-width: 200mm !important;
     transform: none !important;
     flex-shrink: 0 !important;
+    margin: 0 !important;
   }
   #cv-card {
+    display: flex !important;
     flex-direction: row !important;
     page-break-inside: avoid !important;
     break-inside: avoid !important;
     width: 200mm !important;
+    height: 287mm !important;
     min-height: 287mm !important;
     overflow: hidden !important;
     border: 2px solid #8B7B6F !important;
-    border-top: 2px solid #8B7B6F !important;
     box-sizing: border-box !important;
+    margin: 0 !important;
   }
   /* Colonne gauche = étroite - blocs jusqu'au bord haut */
   #cv-sidebar {
@@ -160,10 +163,18 @@ body.export-pdf ::-webkit-scrollbar,
 html.export-pdf ::-webkit-scrollbar {
   display: none !important;
 }
-.export-pdf .min-h-screen,
+.export-pdf .min-h-screen {
+  background: white !important;
+  overflow: hidden !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  width: 100%;
+}
 .export-pdf #cv-content {
   background: white !important;
   overflow: hidden !important;
+  width: 200mm !important;
 }
 .export-pdf * {
   scrollbar-width: none !important;
@@ -177,8 +188,11 @@ html.export-pdf ::-webkit-scrollbar {
 .export-pdf #cv-card {
   display: flex !important;
   flex-direction: row !important;
+  width: 200mm !important;
+  height: 287mm !important;
   border: 2px solid #8B7B6F !important;
   box-shadow: none !important;
+  background: white !important;
 }
 .export-pdf #cv-content {
   border: none !important;
@@ -205,7 +219,7 @@ body.preview-mode #cv-content {
   width: 100%;
   height: calc(100vh - 3.5rem);
   border: none;
-  background: #f5f0e8;
+  background: white;
 }
 #preview-iframe.hidden {
   display: none !important;
