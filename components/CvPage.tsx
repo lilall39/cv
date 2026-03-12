@@ -711,14 +711,14 @@ export default function CvPage() {
                     Profil
                   </h2>
                   <BlockColorButton blockId="headerProfile" label="Profil" />
-                  <label className="no-print inline-flex items-center gap-1.5 ml-2 text-xs text-mocha cursor-pointer">
+                  <label className="no-print inline-flex items-center gap-1.5 ml-2 text-xs font-bold text-green-700 cursor-pointer">
                     <input
                       type="checkbox"
                       checked={!!data.hideProfileTitle}
                       onChange={(e) => updateHideProfileTitle(e.target.checked)}
-                      className="rounded border-mocha/50"
+                      className="rounded border-green-700/50"
                     />
-                    Masquer le titre en aperçu et export
+                    Masquer le titre en aperçu et téléchargement
                   </label>
                 </div>
                 <div id="body-profile" className="section-body mt-10">

@@ -64,7 +64,7 @@ export default function Home() {
 
       <main className="flex-1 max-w-4xl w-full mx-auto px-6 py-12">
         <section className="mb-16">
-          <p className="text-lg text-mocha leading-relaxed mb-8">
+          <p className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-red-500 via-yellow-500 via-green-500 via-blue-500 to-purple-500 bg-clip-text text-transparent leading-relaxed mb-8">
             Une application simple pour créer, personnaliser et exporter votre CV.
             Vos données sont stockées localement dans votre navigateur — aucune
             inscription requise.
