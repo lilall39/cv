@@ -4,12 +4,12 @@ export default function Home() {
   const features = [
     {
       icon: '✏️',
-      title: 'Édition en direct',
+      title: 'Créez votre CV en direct',
       desc: 'Modifiez toutes les sections de votre CV : identité, profil, expériences, formation, compétences et centres d\'intérêt. Les changements s\'affichent immédiatement.',
     },
     {
       icon: '📄',
-      title: 'Export PDF',
+      title: 'Téléchargez en PDF',
       desc: 'Téléchargez votre CV au format PDF, parfait pour l\'envoi par email ou l\'impression. Mise en page A4 optimisée.',
     },
     {
@@ -35,7 +35,12 @@ export default function Home() {
     {
       icon: '🎨',
       title: 'Palettes de couleurs',
-      desc: 'Choisissez parmi plusieurs palettes pour personnaliser l\'apparence de votre CV.',
+      desc: 'Choisissez parmi plusieurs palettes pour personnaliser l\'apparence globale de votre CV.',
+    },
+    {
+      icon: '🌈',
+      title: 'Couleurs par bloc',
+      desc: 'Personnalisez chaque section (Contact, Profil, Expériences...) avec sa propre couleur grâce au sélecteur arc-en-ciel.',
     },
     {
       icon: '🆕',
@@ -45,13 +50,13 @@ export default function Home() {
   ]
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <header className="border-b border-warm/30 bg-oat/50">
-        <div className="max-w-4xl mx-auto px-6 py-6">
-          <h1 className="font-display text-3xl sm:text-4xl font-bold text-espresso">
+    <div className="min-h-screen flex flex-col" style={{ backgroundColor: '#F5F0E8', color: '#3D2C29' }}>
+      <header className="border-b border-warm/30 bg-gradient-to-r from-red-400 via-yellow-400 via-green-400 via-blue-400 to-purple-400 shadow-md">
+        <div className="max-w-4xl mx-auto px-6 py-20 text-center">
+          <h1 className="font-display text-4xl sm:text-5xl font-extrabold text-white drop-shadow-sm">
             Mon CV
           </h1>
-          <p className="text-mocha mt-1">
+          <p className="text-white/90 mt-4 font-medium text-xl sm:text-2xl">
             Créez et éditez votre CV en ligne, gratuitement
           </p>
         </div>
@@ -79,17 +84,30 @@ export default function Home() {
           <h2 className="font-display text-2xl font-semibold text-espresso mb-6">
             Fonctions de l&apos;application
           </h2>
-          <ul className="grid gap-6 sm:grid-cols-2">
+          <ul className="grid gap-4 sm:grid-cols-2">
             {features.map((f, i) => (
-              <li
-                key={i}
-                className="p-5 rounded-xl bg-oat border border-sand hover:border-warm/50 transition-colors"
-              >
-                <span className="text-2xl mb-3 block">{f.icon}</span>
-                <h3 className="font-display font-semibold text-espresso mb-1">
-                  {f.title}
-                </h3>
-                <p className="text-sm text-mocha leading-relaxed">{f.desc}</p>
+              <li key={i}>
+                <details className="group p-5 rounded-xl bg-oat border border-sand hover:border-warm/50 transition-all cursor-pointer">
+                  <summary className="list-none flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <span className="text-2xl">{f.icon}</span>
+                      <h3 className="font-display font-semibold text-espresso">
+                        {f.title}
+                      </h3>
+                    </div>
+                    <svg 
+                      className="w-5 h-5 text-mocha group-open:rotate-180 transition-transform" 
+                      fill="none" 
+                      stroke="currentColor" 
+                      viewBox="0 0 24 24"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </summary>
+                  <p className="text-sm text-mocha leading-relaxed mt-4 pt-4 border-t border-sand/50">
+                    {f.desc}
+                  </p>
+                </details>
               </li>
             ))}
           </ul>

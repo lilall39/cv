@@ -20,11 +20,10 @@ function loadFromStorage(): CvData {
 }
 
 export function useCvData() {
-  const [data, setData] = useState<CvData>(() => loadFromStorage())
-  const [mounted, setMounted] = useState(false)
+  // Toujours initialiser avec DEFAULT_DATA pour éviter le mismatch d'hydratation SSR/client
+  const [data, setData] = useState<CvData>(() => JSON.parse(JSON.stringify(DEFAULT_DATA)))
 
   useEffect(() => {
-    setMounted(true)
     setData(loadFromStorage())
   }, [])
 
@@ -173,7 +172,6 @@ export function useCvData() {
 
   return {
     data,
-    mounted,
     saveData,
     resetToDefault,
     updateBlockBackground,

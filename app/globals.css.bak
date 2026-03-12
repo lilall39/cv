@@ -256,10 +256,10 @@ body.preview-mode #cv-content {
 
 /* Expériences : espace au-dessus du bloc titre */
 #section-experience {
-  padding-top: 0.25rem !important;
+  padding-top: 2rem !important;
 }
 #section-experience > div:first-child {
-  padding-top: 2.25rem !important;
+  padding-top: 2.5rem !important;
 }
 #section-experience > div:first-child h2 {
   padding-top: 0 !important;
@@ -272,10 +272,10 @@ body.preview-mode #cv-content {
 
 /* Expériences : espace au-dessus du bloc titre */
 #section-experience {
-  padding-top: 0.25rem !important;
+  padding-top: 2rem !important;
 }
 #section-experience > div:first-child {
-  padding-top: 2.25rem !important;
+  padding-top: 2.5rem !important;
 }
 #section-experience > div:first-child h2 {
   padding-top: 0 !important;

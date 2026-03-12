@@ -118,6 +118,24 @@ export const PALETTES: Array<{ name: string } & CvColors> = [
     experienceCard: '#F5EDE0',
   },
   {
+    name: 'Beige sable',
+    sidebar: '#E8DFD0',
+    main: '#F5EFE6',
+    experienceCard: '#EDE6DC',
+  },
+  {
+    name: 'Beige nature',
+    sidebar: '#DDD2C4',
+    main: '#F0EAE2',
+    experienceCard: '#E6DFD4',
+  },
+  {
+    name: 'Beige doux',
+    sidebar: '#E2D8CC',
+    main: '#F5EDE4',
+    experienceCard: '#EBE2D8',
+  },
+  {
     name: 'Gris élégant',
     sidebar: '#E0E0E0',
     main: '#F0F0F0',

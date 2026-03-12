@@ -15,7 +15,6 @@ import { DEFAULT_DATA, PALETTES } from '@/types/cv'
 export default function CvPage() {
   const {
     data,
-    mounted,
     updateHeader,
     updateProfile,
     addExperience,
@@ -45,12 +44,6 @@ export default function CvPage() {
   const importInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
-    const rightCol = document.getElementById('cv-main-column')
-    if (rightCol) rightCol.style.background = '#FFFFFF'
-  }, [])
-
-  useEffect(() => {
-    if (!mounted) return
     const remove = () => {
       const el = document.getElementById('section-header')
       if (el) el.remove()
@@ -58,7 +51,7 @@ export default function CvPage() {
     remove()
     const t = setTimeout(remove, 100)
     return () => clearTimeout(t)
-  }, [mounted])
+  }, [])
 
   useEffect(() => {
     const container = document.getElementById('main-sections')
@@ -111,8 +104,11 @@ export default function CvPage() {
     const a = document.createElement('a')
     a.href = url
     a.download = `cv-${new Date().toISOString().slice(0, 10)}.json`
+    a.style.display = 'none'
+    document.body.appendChild(a)
     a.click()
-    URL.revokeObjectURL(url)
+    document.body.removeChild(a)
+    setTimeout(() => URL.revokeObjectURL(url), 100)
   }, [data])
 
   const exportPDF = useCallback(() => {
@@ -278,7 +274,7 @@ export default function CvPage() {
         id="input-profile"
         value={data.profile}
         rows={6}
-        label="Présentation (professionnel ou à propos de moi ou compétences à mettre en avant, etc....)"
+        label="Présentation (Entrée pour aller à la ligne)"
       />,
       () => {
         const val = (document.getElementById('input-profile') as HTMLTextAreaElement)?.value || ''
@@ -342,14 +338,14 @@ export default function CvPage() {
       'Compétences',
       <TextAreaForm
         id="input-skills"
-        value={data.skills.join(', ')}
-        rows={1}
-        label="Compétences (séparées par des virgules)"
-        asInput
+        value={data.skills.join('\n\n')}
+        rows={6}
+        label="Compétences (une par ligne ; ligne vide = nouvelle compétence ; Entrée à l'intérieur d'une ligne)"
       />,
       () => {
-        const val = (document.getElementById('input-skills') as HTMLInputElement)?.value || ''
-        updateSkills(val.split(',').map((s) => s.trim()).filter(Boolean))
+        const val = (document.getElementById('input-skills') as HTMLTextAreaElement)?.value || ''
+        const skills = val.split(/\n\s*\n/).map((s) => s.replace(/\r\n/g, '\n').trim()).filter(Boolean)
+        updateSkills(skills)
         closeModal()
       }
     )
@@ -362,7 +358,7 @@ export default function CvPage() {
         id="input-interests"
         value={data.interests}
         rows={4}
-        label="Centres d'intérêt"
+        label="Centres d'intérêt (Entrée pour retour à la ligne)"
       />,
       () => {
         const val = (document.getElementById('input-interests') as HTMLTextAreaElement)?.value || ''
@@ -378,41 +374,10 @@ export default function CvPage() {
       main: '#FAF8F5',
       experienceCard: '#F5F0E8',
     }
-    const blancPur = PALETTES.find((p) => p.name === 'Blanc pur')
     const content = (
       <div className="space-y-4">
-        {blancPur && (
-          <div className="bg-white ring-2 ring-mocha/30 rounded-xl p-3 shrink-0">
-            <p className="text-xs font-medium text-mocha mb-2">Recommandé</p>
-            <button
-              type="button"
-              className={`palette-btn w-full p-3 rounded-xl border-2 flex items-center gap-3 hover:border-mocha transition-all bg-oat ${
-                c.sidebar === blancPur.sidebar && c.main === blancPur.main && c.experienceCard === blancPur.experienceCard
-                  ? 'border-espresso ring-2 ring-warm'
-                  : 'border-sand'
-              }`}
-              data-palette-index={PALETTES.indexOf(blancPur)}
-              onClick={(e) => {
-                document.querySelectorAll('.palette-btn').forEach((b) => {
-                  b.classList.remove('border-espresso', 'ring-2', 'ring-warm')
-                  b.classList.add('border-sand')
-                })
-                ;(e.currentTarget as HTMLElement).classList.add('border-espresso', 'ring-2', 'ring-warm')
-                ;(e.currentTarget as HTMLElement).classList.remove('border-sand')
-              }}
-            >
-              <div className="flex gap-1.5 shrink-0">
-                <span className="w-10 h-10 rounded-lg border-2 border-gray-400 bg-[#F5F5F5]" />
-                <span className="w-10 h-10 rounded-lg border-2 border-gray-400 bg-white" />
-                <span className="w-10 h-10 rounded-lg border-2 border-gray-400 bg-[#FAFAFA]" />
-              </div>
-              <span className="font-semibold text-espresso text-base">Blanc pur</span>
-            </button>
-          </div>
-        )}
-        <p className="text-xs text-mocha">Autres palettes :</p>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 max-h-[40vh] overflow-y-auto">
-        {PALETTES.filter((p) => p.name !== 'Blanc pur').map((p) => {
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 max-h-[50vh] overflow-y-auto">
+        {PALETTES.map((p) => {
           const i = PALETTES.indexOf(p)
           const selected = c.sidebar === p.sidebar && c.main === p.main && c.experienceCard === p.experienceCard
           return (
@@ -492,7 +457,7 @@ export default function CvPage() {
           const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><script src="https://cdn.tailwindcss.com"><\/script>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script>tailwind.config={theme:{extend:{colors:{cream:'#F5F0E8',sand:'#E8E2D8',warm:'#D4C4B0',espresso:'#3D2C29',mocha:'#5C4A47',oat:'#FAF8F5'},fontFamily:{display:['Cormorant Garamond'],body:['Outfit']}}}}<\/script>
-<style>body{font-family:Outfit,sans-serif;background:#F5F0E8;color:#3D2C29;margin:0;padding:2rem;min-height:100%}.section-body{overflow:visible!important}#body-skills{overflow:visible!important;max-height:none!important}#cv-content{border:none!important;box-shadow:none!important}#cv-sidebar{border-right:2px solid #8B7B6F!important;box-shadow:none!important}#cv-card{border:2px solid #8B7B6F!important;box-shadow:none!important}.hide-in-preview-export{display:none!important}</style></head>
+<style>body{font-family:Outfit,sans-serif;background:#F5F0E8;color:#3D2C29;margin:0;padding:2rem;min-height:100%}.section-body{overflow:visible!important}#body-skills{overflow:visible!important;max-height:none!important}#body-skills span{display:block!important;white-space:pre-line!important}#cv-content{border:none!important;box-shadow:none!important}#cv-sidebar{border-right:2px solid #8B7B6F!important;box-shadow:none!important}#cv-sidebar{display:flex!important;flex-direction:column!important;overflow-x:hidden!important;overflow-wrap:break-word!important;min-width:0!important;max-width:240px!important}#cv-sidebar *{overflow-wrap:break-word!important;word-break:break-word!important}#cv-sidebar > *{min-width:0!important;max-width:100%!important}#cv-sidebar>*{flex:0 0 auto!important;min-height:auto!important}#cv-card{border:2px solid #8B7B6F!important;box-shadow:none!important}.hide-in-preview-export{display:none!important}#section-experience{padding-top:0.25rem!important}#section-experience>div:first-child{padding-top:2.25rem!important}#section-experience>div:first-child h2{padding-top:0!important}#body-profile p{margin-top:-1rem!important}</style></head>
 <body>${clone.outerHTML}</body></html>`
           iframe.srcdoc = html
         }
@@ -512,14 +477,6 @@ export default function CvPage() {
     return () => document.removeEventListener('keydown', handler)
   }, [previewMode, togglePreview])
 
-  if (!mounted) {
-    return (
-      <div className="w-full max-w-[900px] mx-auto px-4 py-12 animate-pulse">
-        <div className="h-96 bg-sand rounded-2xl" />
-      </div>
-    )
-  }
-
   const c = data.colors || { sidebar: '#E8E2D8', main: '#FAF8F5', experienceCard: '#F5F0E8' }
   const bgPage = '#E8E4E0'
   const getBlockBg = (blockId: string): string => {
@@ -530,34 +487,80 @@ export default function CvPage() {
       case 'skills':
       case 'formation':
       case 'interests':
-        return c.sidebar
       case 'headerProfile':
-        return c.experienceCard
+        return c.sidebar
       case 'experience':
         return c.main
       default:
         return c.main
     }
   }
-  const BlockColorButton = ({ blockId, label }: { blockId: string; label: string }) => (
-    <span className="no-print inline-flex items-center gap-1 ml-1">
-      <button
-        type="button"
-        onClick={() => updateBlockBackground(blockId, '#FFFFFF')}
-        className="no-print w-6 h-6 rounded border-2 border-gray-400 shrink-0 hover:ring-2 hover:ring-mocha/50"
-        style={{ background: '#FFFFFF' }}
-        title="Blanc"
-      />
-      <input
-        type="color"
-        value={getBlockBg(blockId)}
-        onChange={(e) => updateBlockBackground(blockId, e.target.value)}
-        onDoubleClick={() => updateBlockBackground(blockId, null)}
-        className="no-print w-6 h-6 rounded border border-mocha/30 cursor-pointer"
-        title={`Couleur : ${label}. Double-clic = réinitialiser.`}
-      />
-    </span>
-  )
+  const darkenHex = (hex: string, factor: number): string => {
+    let h = hex
+    if (/^#?([a-f\d])([a-f\d])([a-f\d])$/i.test(h)) {
+      h = `#${h[1]}${h[1]}${h[2]}${h[2]}${h[3]}${h[3]}`
+    }
+    const m = h.match(/^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i)
+    if (!m) return hex
+    const r = Math.max(0, Math.round(parseInt(m[1], 16) * (1 - factor)))
+    const g = Math.max(0, Math.round(parseInt(m[2], 16) * (1 - factor)))
+    const b = Math.max(0, Math.round(parseInt(m[3], 16) * (1 - factor)))
+    return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`
+  }
+  /** Couleur de bordure = 2 tons plus foncé que la couleur du bloc */
+  const borderColorFromBlock = (blockId: string): string =>
+    darkenHex(darkenHex(getBlockBg(blockId), 0.4), 0.4)
+  const getBlockColorFromPalette = (bid: string, p: (typeof PALETTES)[0]): string => {
+    switch (bid) {
+      case 'contact':
+      case 'skills':
+      case 'formation':
+      case 'interests':
+      case 'headerProfile':
+        return p.sidebar
+      case 'experience':
+        return p.main
+      default:
+        return p.sidebar
+    }
+  }
+  const BlockColorButton = ({ blockId, label }: { blockId: string; label: string }) => {
+    const current = getBlockBg(blockId)
+    return (
+      <span className="no-print inline-flex flex-wrap items-center gap-1 ml-1">
+        {PALETTES.map((p) => {
+          const color = getBlockColorFromPalette(blockId, p)
+          const selected = current === color
+          return (
+            <button
+              key={p.name}
+              type="button"
+              onClick={() => updateBlockBackground(blockId, color)}
+              className={`no-print w-6 h-6 rounded border-2 shrink-0 hover:ring-2 hover:ring-mocha/50 transition-all ${
+                selected ? 'ring-2 ring-mocha border-mocha' : 'border-gray-400'
+              }`}
+              style={{ background: color }}
+              title={p.name}
+            />
+          )
+        })}
+        <span className="no-print relative w-6 h-6 shrink-0">
+          <span
+            className="absolute inset-0 w-6 h-6 rounded border-2 border-mocha/30 cursor-pointer bg-gradient-to-r from-red-400 via-yellow-400 via-green-400 via-blue-400 to-purple-400 hover:ring-2 hover:ring-mocha/50 pointer-events-none"
+            aria-hidden
+          />
+          <input
+            type="color"
+            value={current}
+            onChange={(e) => updateBlockBackground(blockId, e.target.value)}
+            onDoubleClick={() => updateBlockBackground(blockId, null)}
+            className="absolute inset-0 w-full h-full rounded opacity-0 cursor-pointer"
+            title={`Couleur : ${label}. Double-clic = réinitialiser.`}
+          />
+        </span>
+      </span>
+    )
+  }
 
   return (
     <div className="min-h-screen flex flex-col items-center py-4 md:py-6" style={{ background: bgPage }}>
@@ -575,20 +578,20 @@ export default function CvPage() {
           >
             <div className="relative w-full min-w-0 flex-1 min-h-[80px] p-4 pt-4 rounded-none flex flex-col" style={{ background: getBlockBg('contact') }}>
               <div id="body-contact" className="section-body">
-                <div className="mb-4">
-                  <div className="flex items-center gap-2 mb-1 flex-wrap">
-                    <h1 className="font-display text-lg md:text-xl font-bold text-espresso">
+                <div className="mb-4 mt-8">
+                  <div className="flex items-center justify-center gap-2 mb-1 flex-wrap">
+                    <h1 className="font-display font-bold text-espresso text-xl md:text-2xl">
                       {data.header.name}
                     </h1>
                     <button
                       onClick={editHeader}
-                      className="no-print text-sm text-mocha hover:text-espresso underline transition-colors"
+                      className="no-print text-sm font-bold text-green-700 hover:text-green-800 underline transition-colors"
                     >
                       Modifier
                     </button>
                   </div>
                 </div>
-                <div className="flex items-center gap-1 mb-4">
+                <div className="flex items-center justify-center gap-1 mb-4">
                   <h2 className="font-display text-sm font-bold uppercase tracking-wider text-black">
                     Contact
                   </h2>
@@ -611,42 +614,43 @@ export default function CvPage() {
                 </div>
                 <button
                   onClick={editHeader}
-                  className="no-print mt-4 text-xs text-mocha hover:text-espresso underline transition-colors"
+                  className="no-print mt-4 text-xs font-bold text-green-700 hover:text-green-800 underline transition-colors"
                 >
                   Modifier
                 </button>
               </div>
             </div>
 
-            <div className="relative w-full flex-1 min-h-[60px] p-4 pt-0 rounded-none flex flex-col" style={{ background: getBlockBg('skills') }}>
-              <div className="flex items-center gap-1 mb-4">
+            <div className="relative w-full flex-1 min-h-[60px] p-4 pt-0 rounded-none flex flex-col border-b-2" style={{ background: getBlockBg('skills'), borderColor: borderColorFromBlock('skills') }}>
+              <div className="flex items-center justify-center gap-1 mb-4 mt-4">
                 <h2 className="font-display text-sm font-bold uppercase tracking-wider text-black">
                   Compétences
                 </h2>
                 <BlockColorButton blockId="skills" label="Compétences" />
               </div>
               <div id="body-skills" className="section-body">
-                <div className="flex flex-wrap gap-2">
-                  {data.skills.map((skill) => (
+                <div className="flex flex-col gap-1">
+                  {data.skills.map((skill, i) => (
                     <span
-                      key={skill}
-                      className="text-espresso text-xs font-medium"
-                    >
-                      {skill}
-                    </span>
+                      key={`skill-${i}`}
+                      className="text-espresso text-xs font-medium block [&>br]:block"
+                      dangerouslySetInnerHTML={{
+                        __html: skill.replace(/\n/g, '<br />'),
+                      }}
+                    />
                   ))}
                 </div>
                 <button
                   onClick={editSkills}
-                  className="no-print mt-3 text-xs text-mocha hover:text-espresso underline transition-colors"
+                  className="no-print mt-3 text-xs font-bold text-green-700 hover:text-green-800 underline transition-colors"
                 >
                   Modifier
                 </button>
               </div>
             </div>
 
-            <div className="relative w-full flex-1 min-h-[60px] p-4 pt-0 rounded-none flex flex-col" style={{ background: getBlockBg('formation') }}>
-              <div className="flex items-center gap-1 mb-4">
+            <div className="relative w-full flex-1 min-h-[60px] p-4 pt-0 rounded-none flex flex-col border-b-2" style={{ background: getBlockBg('formation'), borderColor: borderColorFromBlock('formation') }}>
+              <div className="flex items-center justify-center gap-1 mb-4 mt-4">
                 <h2 className="font-display text-sm font-bold uppercase tracking-wider text-black">
                   Formation
                 </h2>
@@ -661,25 +665,30 @@ export default function CvPage() {
                 />
                 <button
                   onClick={editEducation}
-                  className="no-print mt-3 text-xs text-mocha hover:text-espresso underline transition-colors"
+                  className="no-print mt-3 text-xs font-bold text-green-700 hover:text-green-800 underline transition-colors"
                 >
                   Modifier
                 </button>
               </div>
             </div>
 
-            <div className="relative w-full flex-1 min-h-[60px] p-4 pt-0 rounded-none flex flex-col" style={{ background: getBlockBg('interests') }}>
-              <div className="flex items-center gap-1 mb-4">
+            <div className="relative w-full flex-1 min-h-[60px] p-4 pt-0 rounded-none flex flex-col border-b-2" style={{ background: getBlockBg('interests'), borderColor: borderColorFromBlock('interests') }}>
+              <div className="flex items-center justify-center gap-1 mb-4 mt-4">
                 <h2 className="font-display text-sm font-bold uppercase tracking-wider text-black">
                   Centres d&apos;intérêt
                 </h2>
-                <BlockColorButton blockId="interests" label="Centres d'intérêt" />
+                <BlockColorButton blockId="interests" label="Centres d'intérêt (Entrée pour retour à la ligne)" />
               </div>
               <div id="body-interests" className="section-body">
-                <p className="text-[12px] text-espresso leading-relaxed">{data.interests}</p>
+                <p
+                  className="text-[12px] text-espresso leading-relaxed"
+                  dangerouslySetInnerHTML={{
+                    __html: data.interests.replace(/\n/g, '<br>'),
+                  }}
+                />
                 <button
                   onClick={editInterests}
-                  className="no-print mt-3 text-xs text-mocha hover:text-espresso underline transition-colors"
+                  className="no-print mt-3 text-xs font-bold text-green-700 hover:text-green-800 underline transition-colors"
                 >
                   Modifier
                 </button>
@@ -687,13 +696,13 @@ export default function CvPage() {
             </div>
           </aside>
 
-          <main id="cv-main-column" className="flex-1 pt-0 pb-6 md:pb-8 px-0 min-w-0 order-1 lg:order-2 min-h-full w-full overflow-hidden" style={{ background: '#FFFFFF' }}>
+          <main id="cv-main-column" className="flex-1 pt-0 pb-6 md:pb-8 px-0 min-w-0 order-1 lg:order-2 min-h-full w-full overflow-hidden" style={{ background: getBlockBg('experience') }}>
             <div id="main-sections" className="w-full space-y-0 min-h-full">
               <div
                 id="section-profile"
                 data-section="profile"
-                style={{ background: getBlockBg('headerProfile') }}
-                className="w-full rounded-none py-4 px-4"
+                style={{ backgroundColor: getBlockBg('headerProfile'), borderColor: '#8B7B6F' }}
+                className="w-full rounded-2xl border-2 py-4 px-4"
               >
                 <div
                   className={`flex items-center gap-1 mb-2 flex-wrap ${data.hideProfileTitle ? 'hide-in-preview-export' : ''}`}
@@ -712,11 +721,11 @@ export default function CvPage() {
                     Masquer le titre en aperçu et export
                   </label>
                 </div>
-                <div id="body-profile" className="section-body">
-                  <p className="text-mocha leading-relaxed text-[14px]">{data.profile}</p>
+                <div id="body-profile" className="section-body mt-10">
+                  <p className="text-mocha leading-relaxed text-[14px] whitespace-pre-line -mt-4">{data.profile}</p>
                   <button
                     onClick={editProfile}
-                    className="no-print mt-2 text-sm text-mocha hover:text-espresso underline transition-colors"
+                    className="no-print mt-2 text-sm font-bold text-green-700 hover:text-green-800 underline transition-colors"
                   >
                     Modifier
                   </button>
@@ -728,8 +737,11 @@ export default function CvPage() {
                 className="section-card group relative w-full pt-0 px-4 pb-4 rounded-none"
                 style={{ background: getBlockBg('experience') }}
               >
-                <div className="flex items-center justify-between gap-2 mb-1 pt-2">
-                  <h2 className="font-display text-xl font-extrabold text-black pt-0 pb-2 border-t-2 border-b-2 border-gray-300 flex-1">
+                <div className="flex items-center justify-between gap-2 mb-1 pt-28">
+                  <h2
+                    className="font-display text-xl font-extrabold text-black flex-1 rounded-full border-2 px-4 py-2 w-fit"
+                    style={{ borderColor: borderColorFromBlock('experience') }}
+                  >
                     Expériences professionnelles
                   </h2>
                   <div className="flex no-print items-center gap-1 opacity-60 hover:opacity-100 transition-opacity">
@@ -833,7 +845,7 @@ export default function CvPage() {
         title="Aperçu du CV"
       />
 
-      <ScrollIndicators previewMode={previewMode} onEditColors={editColors} onTogglePreview={togglePreview} />
+      <ScrollIndicators previewMode={previewMode} onTogglePreview={togglePreview} />
 
       <div className="no-print fixed left-6 top-1/2 flex flex-col gap-3 z-30">
         <button
@@ -876,8 +888,9 @@ export default function CvPage() {
         </button>
       </div>
 
-      <div className="no-print fixed right-6 top-1/2 flex flex-col gap-3 z-30">
+      <div className="no-print fixed right-6 top-1/2 flex flex-col gap-3 z-40">
         <button
+          type="button"
           onClick={downloadCvJson}
           className="bg-gray-600 text-white px-6 py-3 rounded-full shadow-lg hover:bg-gray-700 transition-all flex items-center justify-center gap-2 font-medium w-[210px]"
           title="Sauvegarde un fichier .json pour importer plus tard"
@@ -925,12 +938,12 @@ export default function CvPage() {
         />
       </div>
 
-      <div className="no-print fixed top-4 right-6 bottom-6 flex flex-col justify-between items-start z-30">
-        <div className="flex flex-col gap-2">
+      <div className="no-print fixed top-4 right-6 bottom-6 flex flex-col justify-between items-end z-30 pointer-events-none">
+        <div className="flex flex-col gap-2 pointer-events-auto mt-8">
           <div className="relative group">
           <button
             onClick={() => setShowNewCvConfirm(true)}
-            className="bg-gray-400 text-white px-6 py-3 rounded-full shadow-lg hover:bg-gray-500 transition-all flex items-center gap-2 font-medium shrink-0"
+            className="bg-green-200 text-green-900 px-6 py-3 rounded-full shadow-lg hover:bg-green-300 transition-all flex items-center justify-center gap-2 font-medium shrink-0 w-[210px]"
           >
             <svg
               className="w-5 h-5"
@@ -1041,7 +1054,7 @@ function ExperienceCard({
         <div className="flex gap-2 no-print -mr-1">
           <button
             onClick={onEdit}
-            className="p-2 rounded-lg hover:bg-sand text-mocha transition-colors"
+            className="p-2 rounded-lg hover:bg-sand text-green-700 font-bold hover:text-green-800 transition-colors"
             title="Modifier"
           >
             <svg
@@ -1083,62 +1096,50 @@ function ExperienceCard({
   )
 }
 
-function ScrollIndicators({ previewMode, onEditColors, onTogglePreview }: { previewMode: boolean; onEditColors: () => void; onTogglePreview: () => void }) {
+function ScrollIndicators({ previewMode, onTogglePreview }: { previewMode: boolean; onTogglePreview: () => void }) {
   if (previewMode) return null
 
   return (
-    <div className="no-print fixed top-32 left-6 flex flex-col gap-2 z-30">
-      <Link
-        href="/"
-        className="text-base text-black hover:text-gray-700 transition-colors w-fit"
+    <>
+      <div
+        className="no-print fixed top-4 z-30 flex flex-col items-end gap-2"
+        style={{ right: 'calc(50% + 450px + 1.5rem)' }}
       >
-        ← Accueil
-      </Link>
-      <button
-        onClick={onTogglePreview}
-        className="bg-gray-300 text-espresso px-6 py-3 rounded-full shadow-lg hover:bg-gray-400 transition-all flex items-center gap-2 font-medium w-fit mt-8"
-      >
-        <svg
-          className="w-5 h-5"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
+        <Link
+          href="/"
+          className="text-[calc(1rem+1pt)] text-green-700 hover:text-green-800 transition-colors w-fit whitespace-nowrap"
         >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-          />
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-          />
-        </svg>
-        Aperçu
-      </button>
-      <button
-        onClick={onEditColors}
-        className="bg-gray-300 text-espresso px-6 py-3 rounded-full shadow-lg hover:bg-gray-400 transition-all flex items-center gap-2 font-medium w-fit"
-      >
-        <svg
-          className="w-5 h-5"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
+          ← Accueil
+        </Link>
+      </div>
+      <div className="no-print fixed top-4 left-6 z-30">
+        <button
+          onClick={onTogglePreview}
+          className="bg-green-200 text-green-900 px-6 py-3 rounded-full shadow-lg hover:bg-green-300 transition-all flex items-center gap-2 font-medium w-fit mt-8"
         >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2V5a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"
-          />
-        </svg>
-        Couleurs
-      </button>
-    </div>
+          <svg
+            className="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+            />
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+            />
+          </svg>
+          Aperçu
+        </button>
+      </div>
+    </>
   )
 }
 
