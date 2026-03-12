@@ -32,7 +32,11 @@ export interface CvData {
   sectionOrder: string[]
   sectionHeights: Record<string, number | null>
   colors: CvColors
+  /** Couleurs d'arrière-plan par bloc (contact, skills, formation, interests, headerProfile, experience) */
+  blockBackgrounds?: Record<string, string>
 }
+
+export const BLOCK_IDS = ['contact', 'skills', 'formation', 'interests', 'headerProfile', 'experience'] as const
 
 export const DEFAULT_DATA: CvData = {
   header: {
@@ -69,6 +73,12 @@ export const DEFAULT_DATA: CvData = {
 }
 
 export const PALETTES: Array<{ name: string } & CvColors> = [
+  {
+    name: 'Blanc pur',
+    sidebar: '#F5F5F5',
+    main: '#FFFFFF',
+    experienceCard: '#FAFAFA',
+  },
   {
     name: 'Classique',
     sidebar: '#E8E2D8',
@@ -110,11 +120,5 @@ export const PALETTES: Array<{ name: string } & CvColors> = [
     sidebar: '#E0E0E0',
     main: '#F0F0F0',
     experienceCard: '#E8E8E8',
-  },
-  {
-    name: 'Blanc pur',
-    sidebar: '#F5F5F5',
-    main: '#FFFFFF',
-    experienceCard: '#FAFAFA',
   },
 ]

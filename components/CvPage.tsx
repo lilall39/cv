@@ -25,6 +25,7 @@ export default function CvPage() {
     updateSkills,
     updateInterests,
     updateColors,
+    updateBlockBackground,
     moveSectionUp,
     moveSectionDown,
     resetToDefault,
@@ -43,21 +44,26 @@ export default function CvPage() {
   const importInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
-    const c = data.colors || {
-      sidebar: '#E8E2D8',
-      main: '#FAF8F5',
-      experienceCard: '#F5F0E8',
+    const rightCol = document.getElementById('cv-main-column')
+    if (rightCol) rightCol.style.background = '#FFFFFF'
+  }, [])
+
+  useEffect(() => {
+    if (!mounted) return
+    const remove = () => {
+      const el = document.getElementById('section-header')
+      if (el) el.remove()
     }
-    const sidebar = document.getElementById('cv-sidebar')
-    const card = document.getElementById('cv-card')
-    if (sidebar) sidebar.style.background = c.sidebar
-    if (card) card.style.background = c.main
-  }, [data.colors])
+    remove()
+    const t = setTimeout(remove, 100)
+    return () => clearTimeout(t)
+  }, [mounted])
 
   useEffect(() => {
     const container = document.getElementById('main-sections')
     if (!container) return
-    const order = data.sectionOrder || ['header', 'profile', 'experience']
+    const order = (data.sectionOrder || ['header', 'profile', 'experience'])
+      .filter((id) => id === 'header' || id === 'experience')
     order.forEach((id) => {
       const el = document.getElementById(`section-${id}`)
       if (el) container.appendChild(el)
@@ -110,10 +116,14 @@ export default function CvPage() {
 
   const exportPDF = useCallback(() => {
     if (typeof window === 'undefined') return
-    const cleanup = () => document.body.classList.remove('export-pdf')
+    const cleanup = () => {
+      document.body.classList.remove('export-pdf')
+      document.documentElement.classList.remove('export-pdf')
+    }
     window.addEventListener('afterprint', cleanup, { once: true })
     window.scrollTo(0, 0)
     document.body.classList.add('export-pdf')
+    document.documentElement.classList.add('export-pdf')
     requestAnimationFrame(() => {
       requestAnimationFrame(() => window.print())
     })
@@ -175,14 +185,15 @@ export default function CvPage() {
                 }
               })
             : DEFAULT_DATA.experiences
+          const h = (p.header && typeof p.header === 'object') ? (p.header as Record<string, unknown>) : {}
           const merged = {
             ...DEFAULT_DATA,
             header: {
-              name: String(p.header?.name ?? DEFAULT_DATA.header.name),
-              jobTitle: String(p.header?.jobTitle ?? DEFAULT_DATA.header.jobTitle),
-              address: String(p.header?.address ?? DEFAULT_DATA.header.address),
-              email: String(p.header?.email ?? DEFAULT_DATA.header.email),
-              phone: String(p.header?.phone ?? DEFAULT_DATA.header.phone),
+              name: String(h.name ?? DEFAULT_DATA.header.name),
+              jobTitle: String(h.jobTitle ?? DEFAULT_DATA.header.jobTitle),
+              address: String(h.address ?? DEFAULT_DATA.header.address),
+              email: String(h.email ?? DEFAULT_DATA.header.email),
+              phone: String(h.phone ?? DEFAULT_DATA.header.phone),
             },
             profile: String(p.profile ?? DEFAULT_DATA.profile),
             experiences: safeExperiences,
@@ -193,11 +204,21 @@ export default function CvPage() {
             sectionHeights: (p.sectionHeights && typeof p.sectionHeights === 'object' && !Array.isArray(p.sectionHeights))
               ? (p.sectionHeights as Record<string, number | null>)
               : {},
-            colors: {
-              sidebar: String(p.colors?.sidebar ?? DEFAULT_DATA.colors.sidebar),
-              main: String(p.colors?.main ?? DEFAULT_DATA.colors.main),
-              experienceCard: String(p.colors?.experienceCard ?? DEFAULT_DATA.colors.experienceCard),
-            },
+            colors: (() => {
+              const col = (p.colors && typeof p.colors === 'object') ? (p.colors as Record<string, unknown>) : {}
+              return {
+                sidebar: String(col.sidebar ?? DEFAULT_DATA.colors.sidebar),
+                main: String(col.main ?? DEFAULT_DATA.colors.main),
+                experienceCard: String(col.experienceCard ?? DEFAULT_DATA.colors.experienceCard),
+              }
+            })(),
+            blockBackgrounds: (p.blockBackgrounds && typeof p.blockBackgrounds === 'object' && !Array.isArray(p.blockBackgrounds))
+              ? Object.fromEntries(
+                  Object.entries(p.blockBackgrounds).filter(
+                    ([_, v]) => typeof v === 'string' && /^#[0-9A-Fa-f]{3,8}$/.test(v)
+                  )
+                )
+              : undefined,
           }
           saveData(merged)
         } catch (err) {
@@ -355,12 +376,43 @@ export default function CvPage() {
       main: '#FAF8F5',
       experienceCard: '#F5F0E8',
     }
+    const blancPur = PALETTES.find((p) => p.name === 'Blanc pur')
     const content = (
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 max-h-[60vh] overflow-y-auto">
-        {PALETTES.map((p, i) => {
-          const selected =
-            (c.sidebar === p.sidebar && c.main === p.main && c.experienceCard === p.experienceCard) ||
-            (!data.colors && i === 0)
+      <div className="space-y-4">
+        {blancPur && (
+          <div className="bg-white ring-2 ring-mocha/30 rounded-xl p-3 shrink-0">
+            <p className="text-xs font-medium text-mocha mb-2">Recommandé</p>
+            <button
+              type="button"
+              className={`palette-btn w-full p-3 rounded-xl border-2 flex items-center gap-3 hover:border-mocha transition-all bg-oat ${
+                c.sidebar === blancPur.sidebar && c.main === blancPur.main && c.experienceCard === blancPur.experienceCard
+                  ? 'border-espresso ring-2 ring-warm'
+                  : 'border-sand'
+              }`}
+              data-palette-index={PALETTES.indexOf(blancPur)}
+              onClick={(e) => {
+                document.querySelectorAll('.palette-btn').forEach((b) => {
+                  b.classList.remove('border-espresso', 'ring-2', 'ring-warm')
+                  b.classList.add('border-sand')
+                })
+                ;(e.currentTarget as HTMLElement).classList.add('border-espresso', 'ring-2', 'ring-warm')
+                ;(e.currentTarget as HTMLElement).classList.remove('border-sand')
+              }}
+            >
+              <div className="flex gap-1.5 shrink-0">
+                <span className="w-10 h-10 rounded-lg border-2 border-gray-400 bg-[#F5F5F5]" />
+                <span className="w-10 h-10 rounded-lg border-2 border-gray-400 bg-white" />
+                <span className="w-10 h-10 rounded-lg border-2 border-gray-400 bg-[#FAFAFA]" />
+              </div>
+              <span className="font-semibold text-espresso text-base">Blanc pur</span>
+            </button>
+          </div>
+        )}
+        <p className="text-xs text-mocha">Autres palettes :</p>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 max-h-[40vh] overflow-y-auto">
+        {PALETTES.filter((p) => p.name !== 'Blanc pur').map((p) => {
+          const i = PALETTES.indexOf(p)
+          const selected = c.sidebar === p.sidebar && c.main === p.main && c.experienceCard === p.experienceCard
           return (
             <button
               key={p.name}
@@ -381,32 +433,26 @@ export default function CvPage() {
               }}
             >
               <div className="flex gap-1.5 mb-2">
-                <span
-                  className="w-8 h-8 rounded-lg shrink-0"
-                  style={{
-                    background: p.sidebar,
-                    boxShadow: 'inset 0 0 0 1px rgba(0,0,0,0.08)',
-                  }}
-                />
-                <span
-                  className="w-8 h-8 rounded-lg shrink-0"
-                  style={{
-                    background: p.main,
-                    boxShadow: 'inset 0 0 0 1px rgba(0,0,0,0.08)',
-                  }}
-                />
-                <span
-                  className="w-8 h-8 rounded-lg shrink-0"
-                  style={{
-                    background: p.experienceCard,
-                    boxShadow: 'inset 0 0 0 1px rgba(0,0,0,0.08)',
-                  }}
-                />
+                {[p.sidebar, p.main, p.experienceCard].map((color) => {
+                  const isLight = ['#fff', '#ffffff', '#f5f5f5', '#fafafa', '#faf8f5', '#f5f8fc', '#f8f5fc'].includes(color.toLowerCase())
+                  return (
+                    <span
+                      key={color}
+                      className="w-8 h-8 rounded-lg shrink-0 border"
+                      style={{
+                        background: color,
+                        boxShadow: isLight ? 'inset 0 0 0 1px rgba(0,0,0,0.25)' : 'inset 0 0 0 1px rgba(0,0,0,0.08)',
+                        borderColor: isLight ? 'rgba(0,0,0,0.15)' : 'transparent',
+                      }}
+                    />
+                  )
+                })}
               </div>
               <span className="text-sm font-medium text-espresso">{p.name}</span>
             </button>
           )
         })}
+        </div>
       </div>
     )
     openModal(
@@ -472,22 +518,60 @@ export default function CvPage() {
     )
   }
 
-  const bgMain = data.colors?.main ?? '#FAF8F5'
+  const c = data.colors || { sidebar: '#E8E2D8', main: '#FAF8F5', experienceCard: '#F5F0E8' }
+  const bgPage = '#E8E4E0'
+  const getBlockBg = (blockId: string): string => {
+    const custom = data.blockBackgrounds?.[blockId]
+    if (custom) return custom
+    switch (blockId) {
+      case 'contact':
+      case 'skills':
+      case 'formation':
+      case 'interests':
+        return c.sidebar
+      case 'headerProfile':
+        return c.experienceCard
+      case 'experience':
+        return c.main
+      default:
+        return c.main
+    }
+  }
+  const BlockColorButton = ({ blockId, label }: { blockId: string; label: string }) => (
+    <span className="no-print inline-flex items-center gap-1 ml-1">
+      <button
+        type="button"
+        onClick={() => updateBlockBackground(blockId, '#FFFFFF')}
+        className="no-print w-6 h-6 rounded border-2 border-gray-400 shrink-0 hover:ring-2 hover:ring-mocha/50"
+        style={{ background: '#FFFFFF' }}
+        title="Blanc"
+      />
+      <input
+        type="color"
+        value={getBlockBg(blockId)}
+        onChange={(e) => updateBlockBackground(blockId, e.target.value)}
+        onDoubleClick={() => updateBlockBackground(blockId, null)}
+        className="no-print w-6 h-6 rounded border border-mocha/30 cursor-pointer"
+        title={`Couleur : ${label}. Double-clic = réinitialiser.`}
+      />
+    </span>
+  )
 
   return (
-    <div className="min-h-screen flex flex-col items-center py-4 md:py-6" style={{ background: bgMain }}>
+    <div className="min-h-screen flex flex-col items-center py-4 md:py-6" style={{ background: bgPage }}>
       <div
         id="cv-content"
         ref={cvContentRef}
         className="w-full max-w-[900px] pl-4 pr-0 shadow-none"
-        style={{ background: bgMain }}
+        style={{ background: bgPage }}
       >
         <div id="cv-card" className="flex flex-col lg:flex-row gap-0 overflow-hidden shadow-none">
           <aside
             id="cv-sidebar"
-            className="lg:w-60 shrink-0 text-espresso p-6 md:p-8 order-2 lg:order-1"
+            className="lg:w-60 shrink-0 flex-1 lg:flex-initial text-espresso pt-0 px-0 order-2 lg:order-1 flex flex-col w-full overflow-hidden self-stretch min-h-0"
+            style={{ background: c.sidebar }}
           >
-            <div className="mb-10 mt-20 relative">
+            <div className="relative w-full min-w-0 flex-1 min-h-[80px] p-4 pt-4 rounded-none flex flex-col" style={{ background: getBlockBg('contact') }}>
               <div id="body-contact" className="section-body">
                 <div className="mb-4">
                   <div className="flex items-center gap-2 mb-1 flex-wrap">
@@ -502,9 +586,12 @@ export default function CvPage() {
                     </button>
                   </div>
                 </div>
-                <h2 className="font-display text-sm font-bold uppercase tracking-wider text-black mb-4">
-                  Contact
-                </h2>
+                <div className="flex items-center gap-1 mb-4">
+                  <h2 className="font-display text-sm font-bold uppercase tracking-wider text-black">
+                    Contact
+                  </h2>
+                  <BlockColorButton blockId="contact" label="Contact" />
+                </div>
                 <div className="space-y-3 text-sm text-espresso">
                   <p className="flex items-start gap-2">{data.header.address}</p>
                   <a
@@ -529,10 +616,13 @@ export default function CvPage() {
               </div>
             </div>
 
-            <div className="mb-10 relative">
-              <h2 className="font-display text-sm font-bold uppercase tracking-wider text-black mb-4">
-                Compétences
-              </h2>
+            <div className="relative w-full flex-1 min-h-[60px] p-4 rounded-none flex flex-col" style={{ background: getBlockBg('skills') }}>
+              <div className="flex items-center gap-1 mb-4">
+                <h2 className="font-display text-sm font-bold uppercase tracking-wider text-black">
+                  Compétences
+                </h2>
+                <BlockColorButton blockId="skills" label="Compétences" />
+              </div>
               <div id="body-skills" className="section-body">
                 <div className="flex flex-wrap gap-2">
                   {data.skills.map((skill) => (
@@ -553,10 +643,13 @@ export default function CvPage() {
               </div>
             </div>
 
-            <div className="mb-10 relative">
-              <h2 className="font-display text-sm font-bold uppercase tracking-wider text-black mb-4">
-                Formation
-              </h2>
+            <div className="relative w-full flex-1 min-h-[60px] p-4 rounded-none flex flex-col" style={{ background: getBlockBg('formation') }}>
+              <div className="flex items-center gap-1 mb-4">
+                <h2 className="font-display text-sm font-bold uppercase tracking-wider text-black">
+                  Formation
+                </h2>
+                <BlockColorButton blockId="formation" label="Formation" />
+              </div>
               <div id="body-formation" className="section-body">
                 <p
                   className="text-[12px] text-espresso leading-relaxed"
@@ -573,10 +666,13 @@ export default function CvPage() {
               </div>
             </div>
 
-            <div className="relative">
-              <h2 className="font-display text-sm font-bold uppercase tracking-wider text-black mb-4">
-                Centres d&apos;intérêt
-              </h2>
+            <div className="relative w-full flex-1 min-h-[60px] p-4 rounded-none flex flex-col" style={{ background: getBlockBg('interests') }}>
+              <div className="flex items-center gap-1 mb-4">
+                <h2 className="font-display text-sm font-bold uppercase tracking-wider text-black">
+                  Centres d&apos;intérêt
+                </h2>
+                <BlockColorButton blockId="interests" label="Centres d'intérêt" />
+              </div>
               <div id="body-interests" className="section-body">
                 <p className="text-[12px] text-espresso leading-relaxed">{data.interests}</p>
                 <button
@@ -589,54 +685,36 @@ export default function CvPage() {
             </div>
           </aside>
 
-          <main className="flex-1 pt-0 px-6 pb-6 md:px-8 md:pb-8 lg:px-10 lg:pb-10 min-w-0 order-1 lg:order-2 min-h-full bg-white">
-            <div id="main-sections" className="space-y-6 min-h-full bg-white">
-              <div style={{ background: data.colors?.experienceCard ?? '#F5F0E8' }} className="overflow-hidden">
-                <header
-                  id="section-header"
-                  data-section="header"
-                  className="relative pb-0 mb-0 -mb-24"
-                >
-                  <div className="flex items-center justify-center gap-2 flex-wrap w-full">
-                    <p className="font-display text-2xl md:text-3xl font-bold text-espresso">
-                      {capitalizeFirstOnly(data.header.jobTitle || 'Poste recherché')}
-                    </p>
-                    <button
-                      onClick={editJobTitle}
-                      className="no-print text-sm text-mocha hover:text-espresso underline transition-colors"
-                    >
-                      Modifier
-                    </button>
-                  </div>
-                </header>
-
-                <section
-                  id="section-profile"
-                  data-section="profile"
-                  className="section-card group relative -mt-48"
-                >
-                  <div id="body-profile" className="section-body">
-                    <p className="text-mocha leading-relaxed text-[14px]">{data.profile}</p>
-                    <button
-                      onClick={editProfile}
-                      className="no-print mt-2 text-sm text-mocha hover:text-espresso underline transition-colors"
-                    >
-                      Modifier
-                    </button>
-                  </div>
-                </section>
+          <main id="cv-main-column" className="flex-1 pt-0 pb-6 md:pb-8 px-0 min-w-0 order-1 lg:order-2 min-h-full w-full overflow-hidden" style={{ background: '#FFFFFF' }}>
+            <div id="main-sections" className="w-full space-y-0 min-h-full">
+              <div
+                id="section-profile"
+                data-section="profile"
+                style={{ background: getBlockBg('headerProfile') }}
+                className="w-full rounded-none py-4 px-4"
+              >
+                <div id="body-profile" className="section-body">
+                  <p className="text-mocha leading-relaxed text-[14px]">{data.profile}</p>
+                  <button
+                    onClick={editProfile}
+                    className="no-print mt-2 text-sm text-mocha hover:text-espresso underline transition-colors"
+                  >
+                    Modifier
+                  </button>
+                </div>
               </div>
-
               <section
                 id="section-experience"
                 data-section="experience"
-                className="section-card group relative -mt-20"
+                className="section-card group relative w-full p-4 rounded-none"
+                style={{ background: getBlockBg('experience') }}
               >
-                <div className="flex items-center justify-between gap-2 mb-1 mt-2">
+                <div className="flex items-center justify-between gap-2 mb-1 pt-2">
                   <h2 className="font-display text-xl font-extrabold text-black pt-2 pb-2 border-t-2 border-b-2 border-gray-300 flex-1">
                     Expériences professionnelles
                   </h2>
-                  <div className="flex no-print opacity-60 hover:opacity-100 transition-opacity">
+                  <div className="flex no-print items-center gap-1 opacity-60 hover:opacity-100 transition-opacity">
+                    <BlockColorButton blockId="experience" label="Expériences" />
                     <button
                       onClick={() => moveSectionUp('experience')}
                       className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-600"
@@ -749,7 +827,7 @@ export default function CvPage() {
           <div className="relative group">
           <button
             onClick={() => setShowNewCvConfirm(true)}
-            className="bg-[#E8A598] text-espresso px-6 py-3 rounded-full shadow-lg hover:bg-[#E09586] transition-all flex items-center gap-2 font-medium shrink-0"
+            className="bg-gray-400 text-white px-6 py-3 rounded-full shadow-lg hover:bg-gray-500 transition-all flex items-center gap-2 font-medium shrink-0"
           >
             <svg
               className="w-5 h-5"
@@ -774,7 +852,7 @@ export default function CvPage() {
         <div className="flex flex-col gap-3">
           <button
             onClick={exportPDF}
-            className="bg-green-500 text-white px-6 py-3 rounded-full shadow-lg hover:bg-green-600 transition-all flex items-center gap-2 font-medium"
+            className="bg-gray-500 text-white px-6 py-3 rounded-full shadow-lg hover:bg-gray-600 transition-all flex items-center gap-2 font-medium"
           >
             <svg
               className="w-5 h-5"
@@ -793,7 +871,7 @@ export default function CvPage() {
           </button>
           <button
             onClick={() => window.print()}
-            className="bg-green-500 text-white px-6 py-3 rounded-full shadow-lg hover:bg-green-600 transition-all flex items-center gap-2 font-medium"
+            className="bg-gray-500 text-white px-6 py-3 rounded-full shadow-lg hover:bg-gray-600 transition-all flex items-center gap-2 font-medium"
           >
             <svg
               className="w-5 h-5"
@@ -814,7 +892,7 @@ export default function CvPage() {
         <div className="flex flex-col gap-3">
           <button
             onClick={downloadCvJson}
-            className="bg-blue-500 text-white px-6 py-3 rounded-full shadow-lg hover:bg-blue-600 transition-all flex items-center justify-center gap-2 font-medium w-[210px]"
+            className="bg-gray-600 text-white px-6 py-3 rounded-full shadow-lg hover:bg-gray-700 transition-all flex items-center justify-center gap-2 font-medium w-[210px]"
             title="Sauvegarde un fichier .json pour importer plus tard"
           >
             <svg
@@ -834,7 +912,7 @@ export default function CvPage() {
           </button>
           <button
             onClick={handleImportClick}
-            className="bg-blue-500 text-white px-6 py-3 rounded-full shadow-lg hover:bg-blue-600 transition-all flex items-center justify-center gap-2 font-medium w-[210px] text-center"
+            className="bg-gray-600 text-white px-6 py-3 rounded-full shadow-lg hover:bg-gray-700 transition-all flex items-center justify-center gap-2 font-medium w-[210px] text-center"
             title="Charger un CV depuis un fichier .json"
           >
             <svg
@@ -997,7 +1075,7 @@ function ScrollIndicators({ previewMode, onEditColors, onTogglePreview }: { prev
     <div className="no-print fixed top-10 left-6 flex flex-col gap-2 z-30">
       <button
         onClick={onTogglePreview}
-        className="bg-yellow-400 text-espresso px-6 py-3 rounded-full shadow-lg hover:bg-yellow-500 transition-all flex items-center gap-2 font-medium w-fit"
+        className="bg-gray-300 text-espresso px-6 py-3 rounded-full shadow-lg hover:bg-gray-400 transition-all flex items-center gap-2 font-medium w-fit"
       >
         <svg
           className="w-5 h-5"
@@ -1022,7 +1100,7 @@ function ScrollIndicators({ previewMode, onEditColors, onTogglePreview }: { prev
       </button>
       <button
         onClick={onEditColors}
-        className="bg-yellow-400 text-espresso px-6 py-3 rounded-full shadow-lg hover:bg-yellow-500 transition-all flex items-center gap-2 font-medium w-fit"
+        className="bg-gray-300 text-espresso px-6 py-3 rounded-full shadow-lg hover:bg-gray-400 transition-all flex items-center gap-2 font-medium w-fit"
       >
         <svg
           className="w-5 h-5"

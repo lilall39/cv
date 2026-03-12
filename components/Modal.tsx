@@ -1,5 +1,7 @@
 'use client'
 
+import { useEffect, useRef } from 'react'
+
 interface ModalProps {
   title: string
   children: React.ReactNode
@@ -8,12 +10,16 @@ interface ModalProps {
 }
 
 export function Modal({ title, children, onClose, onSave }: ModalProps) {
+  const scrollRef = useRef<HTMLDivElement>(null)
+  useEffect(() => {
+    scrollRef.current?.scrollTo(0, 0)
+  }, [title])
   return (
     <div
       className="fixed inset-0 bg-espresso/50 flex items-center justify-center z-50 p-4"
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
-      <div className="bg-oat rounded-2xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
+      <div ref={scrollRef} className="bg-oat rounded-2xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto overflow-x-hidden">
         <div className="p-6">
           <h3 className="font-display text-xl font-semibold text-espresso mb-4">
             {title}

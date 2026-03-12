@@ -12,6 +12,13 @@
   * {
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+  }
+  *::-webkit-scrollbar {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
   }
   .no-print {
     display: none !important;
@@ -54,7 +61,7 @@
     border-top: 2px solid #8B7B6F !important;
     box-sizing: border-box !important;
   }
-  /* Colonne gauche = étroite */
+  /* Colonne gauche = étroite - blocs jusqu'au bord haut */
   #cv-sidebar {
     width: 55mm !important;
     min-width: 55mm !important;
@@ -62,8 +69,11 @@
     flex: 0 0 55mm !important;
     order: 1 !important;
     align-self: stretch !important;
-    padding: 1rem !important;
+    padding: 0 !important;
     text-align: center !important;
+  }
+  #cv-sidebar > div:first-child {
+    padding-top: 0.25rem !important;
   }
   #cv-sidebar h1,
   #cv-sidebar h2,
@@ -71,12 +81,15 @@
   #cv-sidebar a {
     text-align: center !important;
   }
-  /* Colonne droite = large, textes qui emplissent */
+  /* Colonne droite = large - blocs jusqu'au bord haut */
   #cv-card main {
     flex: 1 1 auto !important;
     min-width: 0 !important;
     order: 2 !important;
-    padding: 1.25rem 1.5rem !important;
+    padding: 0 0 1.25rem 0 !important;
+  }
+  #cv-card main #section-header {
+    display: none !important;
   }
   #main-sections {
     overflow: visible !important;
@@ -124,6 +137,31 @@
 
 .export-pdf .no-print {
   display: none !important;
+}
+body.export-pdf,
+html.export-pdf {
+  overflow: hidden !important;
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+  background: white !important;
+}
+body.export-pdf ::-webkit-scrollbar,
+html.export-pdf ::-webkit-scrollbar {
+  display: none !important;
+}
+.export-pdf .min-h-screen,
+.export-pdf #cv-content {
+  background: white !important;
+  overflow: hidden !important;
+}
+.export-pdf * {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+.export-pdf *::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
 }
 .export-pdf #cv-card {
   display: flex !important;
@@ -200,6 +238,11 @@ body.preview-mode #cv-content {
 #body-experience {
   overflow: visible !important;
   max-height: none !important;
+}
+
+/* Bloc Poste recherché supprimé du CV */
+#section-header {
+  display: none !important;
 }
 
 #cv-content {

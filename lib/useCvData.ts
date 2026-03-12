@@ -110,6 +110,19 @@ export function useCvData() {
     [saveData]
   )
 
+  const updateBlockBackground = useCallback(
+    (blockId: string, color: string | null) => {
+      saveData((d) => {
+        const next = { ...(d.blockBackgrounds || {}) }
+        if (color) next[blockId] = color
+        else delete next[blockId]
+        const blockBackgrounds = Object.keys(next).length ? next : undefined
+        return { ...d, blockBackgrounds }
+      })
+    },
+    [saveData]
+  )
+
   const moveSectionUp = useCallback(
     (sectionId: string) => {
       const order = [...(data.sectionOrder || ['header', 'profile', 'experience'])]
@@ -158,6 +171,7 @@ export function useCvData() {
     mounted,
     saveData,
     resetToDefault,
+    updateBlockBackground,
     updateHeader,
     updateProfile,
     addExperience,
