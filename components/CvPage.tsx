@@ -26,6 +26,7 @@ export default function CvPage() {
     updateInterests,
     updateColors,
     updateBlockBackground,
+    updateHideProfileTitle,
     moveSectionUp,
     moveSectionDown,
     resetToDefault,
@@ -219,6 +220,7 @@ export default function CvPage() {
                   )
                 )
               : undefined,
+            hideProfileTitle: p.hideProfileTitle === true,
           }
           saveData(merged)
         } catch (err) {
@@ -276,7 +278,7 @@ export default function CvPage() {
         id="input-profile"
         value={data.profile}
         rows={6}
-        label="Résumé professionnel"
+        label="Présentation (professionnel ou à propos de moi ou compétences à mettre en avant, etc....)"
       />,
       () => {
         const val = (document.getElementById('input-profile') as HTMLTextAreaElement)?.value || ''
@@ -490,7 +492,7 @@ export default function CvPage() {
           const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><script src="https://cdn.tailwindcss.com"><\/script>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script>tailwind.config={theme:{extend:{colors:{cream:'#F5F0E8',sand:'#E8E2D8',warm:'#D4C4B0',espresso:'#3D2C29',mocha:'#5C4A47',oat:'#FAF8F5'},fontFamily:{display:['Cormorant Garamond'],body:['Outfit']}}}}<\/script>
-<style>body{font-family:Outfit,sans-serif;background:#F5F0E8;color:#3D2C29;margin:0;padding:2rem;min-height:100%}.section-body{overflow:visible!important}#body-skills{overflow:visible!important;max-height:none!important}#cv-content{border:none!important;box-shadow:none!important}#cv-sidebar{border-right:2px solid #8B7B6F!important;box-shadow:none!important}#cv-card{border:2px solid #8B7B6F!important;box-shadow:none!important}</style></head>
+<style>body{font-family:Outfit,sans-serif;background:#F5F0E8;color:#3D2C29;margin:0;padding:2rem;min-height:100%}.section-body{overflow:visible!important}#body-skills{overflow:visible!important;max-height:none!important}#cv-content{border:none!important;box-shadow:none!important}#cv-sidebar{border-right:2px solid #8B7B6F!important;box-shadow:none!important}#cv-card{border:2px solid #8B7B6F!important;box-shadow:none!important}.hide-in-preview-export{display:none!important}</style></head>
 <body>${clone.outerHTML}</body></html>`
           iframe.srcdoc = html
         }
@@ -616,7 +618,7 @@ export default function CvPage() {
               </div>
             </div>
 
-            <div className="relative w-full flex-1 min-h-[60px] p-4 rounded-none flex flex-col" style={{ background: getBlockBg('skills') }}>
+            <div className="relative w-full flex-1 min-h-[60px] p-4 pt-0 rounded-none flex flex-col" style={{ background: getBlockBg('skills') }}>
               <div className="flex items-center gap-1 mb-4">
                 <h2 className="font-display text-sm font-bold uppercase tracking-wider text-black">
                   Compétences
@@ -643,7 +645,7 @@ export default function CvPage() {
               </div>
             </div>
 
-            <div className="relative w-full flex-1 min-h-[60px] p-4 rounded-none flex flex-col" style={{ background: getBlockBg('formation') }}>
+            <div className="relative w-full flex-1 min-h-[60px] p-4 pt-0 rounded-none flex flex-col" style={{ background: getBlockBg('formation') }}>
               <div className="flex items-center gap-1 mb-4">
                 <h2 className="font-display text-sm font-bold uppercase tracking-wider text-black">
                   Formation
@@ -666,7 +668,7 @@ export default function CvPage() {
               </div>
             </div>
 
-            <div className="relative w-full flex-1 min-h-[60px] p-4 rounded-none flex flex-col" style={{ background: getBlockBg('interests') }}>
+            <div className="relative w-full flex-1 min-h-[60px] p-4 pt-0 rounded-none flex flex-col" style={{ background: getBlockBg('interests') }}>
               <div className="flex items-center gap-1 mb-4">
                 <h2 className="font-display text-sm font-bold uppercase tracking-wider text-black">
                   Centres d&apos;intérêt
@@ -693,6 +695,23 @@ export default function CvPage() {
                 style={{ background: getBlockBg('headerProfile') }}
                 className="w-full rounded-none py-4 px-4"
               >
+                <div
+                  className={`flex items-center gap-1 mb-2 flex-wrap ${data.hideProfileTitle ? 'hide-in-preview-export' : ''}`}
+                >
+                  <h2 className="font-display text-sm font-bold uppercase tracking-wider text-black">
+                    Profil
+                  </h2>
+                  <BlockColorButton blockId="headerProfile" label="Profil" />
+                  <label className="no-print inline-flex items-center gap-1.5 ml-2 text-xs text-mocha cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={!!data.hideProfileTitle}
+                      onChange={(e) => updateHideProfileTitle(e.target.checked)}
+                      className="rounded border-mocha/50"
+                    />
+                    Masquer le titre en aperçu et export
+                  </label>
+                </div>
                 <div id="body-profile" className="section-body">
                   <p className="text-mocha leading-relaxed text-[14px]">{data.profile}</p>
                   <button
@@ -706,11 +725,11 @@ export default function CvPage() {
               <section
                 id="section-experience"
                 data-section="experience"
-                className="section-card group relative w-full p-4 rounded-none"
+                className="section-card group relative w-full pt-0 px-4 pb-4 rounded-none"
                 style={{ background: getBlockBg('experience') }}
               >
                 <div className="flex items-center justify-between gap-2 mb-1 pt-2">
-                  <h2 className="font-display text-xl font-extrabold text-black pt-2 pb-2 border-t-2 border-b-2 border-gray-300 flex-1">
+                  <h2 className="font-display text-xl font-extrabold text-black pt-0 pb-2 border-t-2 border-b-2 border-gray-300 flex-1">
                     Expériences professionnelles
                   </h2>
                   <div className="flex no-print items-center gap-1 opacity-60 hover:opacity-100 transition-opacity">
@@ -816,14 +835,98 @@ export default function CvPage() {
 
       <ScrollIndicators previewMode={previewMode} onEditColors={editColors} onTogglePreview={togglePreview} />
 
+      <div className="no-print fixed left-6 top-1/2 flex flex-col gap-3 z-30">
+        <button
+          onClick={exportPDF}
+          className="bg-gray-500 text-white px-6 py-3 rounded-full shadow-lg hover:bg-gray-600 transition-all flex items-center gap-2 font-medium"
+        >
+          <svg
+            className="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+            />
+          </svg>
+          Télécharger en PDF
+        </button>
+        <button
+          onClick={() => window.print()}
+          className="bg-gray-500 text-white px-6 py-3 rounded-full shadow-lg hover:bg-gray-600 transition-all flex items-center gap-2 font-medium"
+        >
+          <svg
+            className="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"
+            />
+          </svg>
+          Imprimer
+        </button>
+      </div>
+
+      <div className="no-print fixed right-6 top-1/2 flex flex-col gap-3 z-30">
+        <button
+          onClick={downloadCvJson}
+          className="bg-gray-600 text-white px-6 py-3 rounded-full shadow-lg hover:bg-gray-700 transition-all flex items-center justify-center gap-2 font-medium w-[210px]"
+          title="Sauvegarde un fichier .json pour importer plus tard"
+        >
+          <svg
+            className="w-5 h-5 shrink-0"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+            />
+          </svg>
+          <span className="text-left leading-tight block">Télécharger les données du CV<br />(pour réutilisation<br />sur l&apos;appli)</span>
+        </button>
+        <button
+          onClick={handleImportClick}
+          className="bg-gray-600 text-white px-6 py-3 rounded-full shadow-lg hover:bg-gray-700 transition-all flex items-center justify-center gap-2 font-medium w-[210px] text-center"
+          title="Charger un CV depuis un fichier .json"
+        >
+          <svg
+            className="w-5 h-5 shrink-0"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"
+            />
+          </svg>
+          <span className="leading-tight block">Importer vos données d&apos;un CV<br />sauvegardé sur l&apos;appli</span>
+        </button>
+        <input
+          ref={importInputRef}
+          type="file"
+          className="hidden"
+          onChange={handleImportFile}
+        />
+      </div>
+
       <div className="no-print fixed top-4 right-6 bottom-6 flex flex-col justify-between items-start z-30">
         <div className="flex flex-col gap-2">
-          <Link
-            href="/"
-            className="text-sm text-mocha hover:text-espresso transition-colors"
-          >
-            ← Accueil
-          </Link>
           <div className="relative group">
           <button
             onClick={() => setShowNewCvConfirm(true)}
@@ -848,94 +951,6 @@ export default function CvPage() {
             Créez un nouveau CV. Vous pourrez sauvegarder le CV actuel au format PDF avant de continuer.
           </div>
         </div>
-        </div>
-        <div className="flex flex-col gap-3">
-          <button
-            onClick={exportPDF}
-            className="bg-gray-500 text-white px-6 py-3 rounded-full shadow-lg hover:bg-gray-600 transition-all flex items-center gap-2 font-medium"
-          >
-            <svg
-              className="w-5 h-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-              />
-            </svg>
-            Télécharger en PDF
-          </button>
-          <button
-            onClick={() => window.print()}
-            className="bg-gray-500 text-white px-6 py-3 rounded-full shadow-lg hover:bg-gray-600 transition-all flex items-center gap-2 font-medium"
-          >
-            <svg
-              className="w-5 h-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"
-              />
-            </svg>
-            Imprimer
-          </button>
-        </div>
-        <div className="flex flex-col gap-3">
-          <button
-            onClick={downloadCvJson}
-            className="bg-gray-600 text-white px-6 py-3 rounded-full shadow-lg hover:bg-gray-700 transition-all flex items-center justify-center gap-2 font-medium w-[210px]"
-            title="Sauvegarde un fichier .json pour importer plus tard"
-          >
-            <svg
-              className="w-5 h-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-              />
-            </svg>
-            <span className="text-left leading-tight block">Télécharger les données du CV<br />(pour réutilisation<br />sur l&apos;appli)</span>
-          </button>
-          <button
-            onClick={handleImportClick}
-            className="bg-gray-600 text-white px-6 py-3 rounded-full shadow-lg hover:bg-gray-700 transition-all flex items-center justify-center gap-2 font-medium w-[210px] text-center"
-            title="Charger un CV depuis un fichier .json"
-          >
-            <svg
-              className="w-5 h-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"
-            />
-          </svg>
-          <span className="leading-tight block">Importer vos données d&apos;un CV<br />sauvegardé sur l&apos;appli</span>
-        </button>
-        <input
-          ref={importInputRef}
-          type="file"
-          className="hidden"
-          onChange={handleImportFile}
-        />
         </div>
       </div>
 
@@ -1072,10 +1087,16 @@ function ScrollIndicators({ previewMode, onEditColors, onTogglePreview }: { prev
   if (previewMode) return null
 
   return (
-    <div className="no-print fixed top-10 left-6 flex flex-col gap-2 z-30">
+    <div className="no-print fixed top-32 left-6 flex flex-col gap-2 z-30">
+      <Link
+        href="/"
+        className="text-base text-black hover:text-gray-700 transition-colors w-fit"
+      >
+        ← Accueil
+      </Link>
       <button
         onClick={onTogglePreview}
-        className="bg-gray-300 text-espresso px-6 py-3 rounded-full shadow-lg hover:bg-gray-400 transition-all flex items-center gap-2 font-medium w-fit"
+        className="bg-gray-300 text-espresso px-6 py-3 rounded-full shadow-lg hover:bg-gray-400 transition-all flex items-center gap-2 font-medium w-fit mt-8"
       >
         <svg
           className="w-5 h-5"

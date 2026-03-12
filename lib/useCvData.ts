@@ -110,6 +110,11 @@ export function useCvData() {
     [saveData]
   )
 
+  const updateHideProfileTitle = useCallback(
+    (hide: boolean) => saveData((d) => ({ ...d, hideProfileTitle: hide })),
+    [saveData]
+  )
+
   const updateBlockBackground = useCallback(
     (blockId: string, color: string | null) => {
       saveData((d) => {
@@ -172,6 +177,7 @@ export function useCvData() {
     saveData,
     resetToDefault,
     updateBlockBackground,
+    updateHideProfileTitle,
     updateHeader,
     updateProfile,
     addExperience,

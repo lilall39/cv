@@ -34,6 +34,8 @@ export interface CvData {
   colors: CvColors
   /** Couleurs d'arrière-plan par bloc (contact, skills, formation, interests, headerProfile, experience) */
   blockBackgrounds?: Record<string, string>
+  /** Masquer le titre "Profil" en aperçu et à l'export PDF (le texte reste visible) */
+  hideProfileTitle?: boolean
 }
 
 export const BLOCK_IDS = ['contact', 'skills', 'formation', 'interests', 'headerProfile', 'experience'] as const

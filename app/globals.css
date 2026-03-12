@@ -138,6 +138,9 @@
 .export-pdf .no-print {
   display: none !important;
 }
+.export-pdf .hide-in-preview-export {
+  display: none !important;
+}
 body.export-pdf,
 html.export-pdf {
   overflow: hidden !important;
@@ -240,9 +243,42 @@ body.preview-mode #cv-content {
   max-height: none !important;
 }
 
+/* Expériences : coller au bloc Profil (trait au niveau du bord) */
+#section-experience {
+  padding-top: 0 !important;
+}
+#section-experience > div:first-child {
+  padding-top: 0 !important;
+}
+#section-experience > div:first-child h2 {
+  padding-top: 0 !important;
+}
+
+#section-profile #body-profile,
+#section-profile .section-body {
+  background: transparent !important;
+}
+
+/* Expériences : coller au bloc Profil (trait au niveau du bord) */
+#section-experience {
+  padding-top: 0 !important;
+}
+#section-experience > div:first-child {
+  padding-top: 0 !important;
+}
+#section-experience > div:first-child h2 {
+  padding-top: 0 !important;
+}
+
 /* Bloc Poste recherché supprimé du CV */
 #section-header {
   display: none !important;
+}
+
+/* Enfants du bloc Profil : fond transparent pour laisser voir la couleur du parent */
+#section-profile #body-profile,
+#section-profile .section-body {
+  background: transparent !important;
 }
 
 #cv-content {
