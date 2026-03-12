@@ -40,7 +40,7 @@ export default function Home() {
     {
       icon: '🌈',
       title: 'Couleurs par bloc',
-      desc: 'Personnalisez chaque section (Contact, Profil, Expériences...) avec sa propre couleur grâce au sélecteur arc-en-ciel.',
+      desc: 'Personnalisez chaque section (Contact, Profil, Expériences...) avec sa propre couleur grâce au sélecteur de couleur ( petits rectangles )',
     },
     {
       icon: '🆕',
