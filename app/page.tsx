@@ -52,7 +52,7 @@ export default function Home() {
   return (
     <div className="min-h-screen flex flex-col" style={{ backgroundColor: '#F5F0E8', color: '#3D2C29' }}>
       <header className="border-b border-warm/30 bg-gradient-to-r from-red-400 via-yellow-400 via-green-400 via-blue-400 to-purple-400 shadow-md">
-        <div className="max-w-4xl mx-auto px-6 py-20 text-center">
+        <div className="max-w-6xl mx-auto px-6 py-20 text-center">
           <h1 className="font-display text-4xl sm:text-5xl font-extrabold text-white drop-shadow-sm">
             Mon CV
           </h1>
@@ -62,7 +62,7 @@ export default function Home() {
         </div>
       </header>
 
-      <main className="flex-1 max-w-4xl w-full mx-auto px-6 py-12">
+      <main className="flex-1 max-w-6xl w-full mx-auto px-6 py-12">
         <section className="mb-16">
           <p className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-red-500 via-yellow-500 via-green-500 via-blue-500 to-purple-500 bg-clip-text text-transparent leading-relaxed mb-8">
             Une application simple pour créer, personnaliser et exporter votre CV.
@@ -115,7 +115,7 @@ export default function Home() {
       </main>
 
       <footer className="border-t border-warm/30 py-6 mt-12">
-        <div className="max-w-4xl mx-auto px-6 text-center text-sm text-mocha">
+        <div className="max-w-6xl mx-auto px-6 text-center text-sm text-mocha">
           Vos données restent sur votre appareil. Aucun serveur ne les stocke.
         </div>
       </footer>
