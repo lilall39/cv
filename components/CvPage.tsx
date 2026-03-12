@@ -457,7 +457,7 @@ export default function CvPage() {
           const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><script src="https://cdn.tailwindcss.com"><\/script>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script>tailwind.config={theme:{extend:{colors:{cream:'#F5F0E8',sand:'#E8E2D8',warm:'#D4C4B0',espresso:'#3D2C29',mocha:'#5C4A47',oat:'#FAF8F5'},fontFamily:{display:['Cormorant Garamond'],body:['Outfit']}}}}<\/script>
-<style>body{font-family:Outfit,sans-serif;background:white;color:#3D2C29;margin:0;padding:0;min-height:100vh;display:flex;justify-content:center;align-items:center}.section-body{overflow:visible!important}#body-skills{overflow:visible!important;max-height:none!important}#body-skills span{display:block!important;white-space:pre-line!important}#cv-content{border:none!important;box-shadow:none!important;width:200mm!important}#cv-sidebar{border-right:2px solid #8B7B6F!important;box-shadow:none!important}#cv-sidebar{display:flex!important;flex-direction:column!important;overflow-x:hidden!important;overflow-wrap:break-word!important;min-width:0!important;max-width:240px!important}#cv-sidebar *{overflow-wrap:break-word!important;word-break:break-word!important}#cv-sidebar > *{min-width:0!important;max-width:100%!important}#cv-sidebar>*{flex:0 0 auto!important;min-height:auto!important}#cv-card{border:2px solid #8B7B6F!important;box-shadow:none!important;width:200mm!important;height:287mm!important;background:white!important}.hide-in-preview-export{display:none!important}#section-experience{padding-top:0.25rem!important}#section-experience>div:first-child{padding-top:2.25rem!important}#section-experience>div:first-child h2{padding-top:0!important}#body-profile p{margin-top:-1rem!important}</style></head>
+<style>body{font-family:Outfit,sans-serif;background:white;color:#3D2C29;margin:0;padding:0;min-height:100vh;display:flex;justify-content:center;align-items:center}.section-body{overflow:visible!important}#body-skills{overflow:visible!important;max-height:none!important;display:flex!important;flex-direction:column!important;align-items:center!important;text-align:center!important}#body-skills span{display:block!important;white-space:pre-line!important}#body-contact .space-y-3,#body-formation,#body-interests{text-align:center!important;display:flex!important;flex-direction:column!important;align-items:center!important}#cv-content{border:none!important;box-shadow:none!important;width:200mm!important}#cv-sidebar{border-right:2px solid #8B7B6F!important;box-shadow:none!important;display:flex!important;flex-direction:column!important;overflow-x:hidden!important;overflow-wrap:break-word!important;width:55mm!important;min-width:55mm!important;max-width:55mm!important;flex:0 0 55mm!important;padding:0!important;text-align:center!important}#cv-sidebar h1{font-size:calc(1.25rem + 1pt)!important;text-align:center!important}#cv-sidebar h2{text-align:center!important}#cv-sidebar *{overflow-wrap:break-word!important;word-break:break-word!important;text-align:center!important}#cv-sidebar > *{min-width:0!important;max-width:100%!important;flex:0 0 auto!important;min-height:auto!important}#cv-sidebar > div:first-child {padding-top:0.25rem!important}#cv-card{display:flex!important;flex-direction:row!important;border:2px solid #8B7B6F!important;box-shadow:none!important;width:200mm!important;height:287mm!important;background:white!important;page-break-inside:avoid!important;break-inside:avoid!important}.hide-in-preview-export{display:none!important}#cv-card main{flex:1 1 auto!important;min-width:0!important;padding:0 0 1.25rem 0!important}#section-experience{padding-top:0.25rem!important}#section-experience>div:first-child{padding-top:2.25rem!important}#section-experience>div:first-child h2{padding-top:0!important}#body-profile p{margin-top:-1rem!important}</style></head>
 <body>${clone.outerHTML}</body></html>`
           iframe.srcdoc = html
         }
@@ -563,20 +563,20 @@ export default function CvPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center py-4 md:py-6" style={{ background: bgPage }}>
+    <div className="min-h-screen flex flex-col items-center py-4 md:py-6" style={{ background: 'white' }}>
       <div
         id="cv-content"
         ref={cvContentRef}
-        className="w-full max-w-[900px] pl-4 pr-0 shadow-none"
-        style={{ background: bgPage }}
+        className="w-full max-w-[900px] px-0 shadow-none"
+        style={{ background: 'transparent' }}
       >
         <div id="cv-card" className="flex flex-col lg:flex-row gap-0 overflow-hidden shadow-none">
           <aside
             id="cv-sidebar"
-            className="lg:w-60 shrink-0 flex-1 lg:flex-initial text-espresso pt-0 px-0 order-2 lg:order-1 flex flex-col w-full overflow-hidden self-stretch min-h-0"
+            className="lg:w-[55mm] lg:min-w-[55mm] lg:max-w-[55mm] shrink-0 flex-1 lg:flex-initial text-espresso pt-0 px-0 order-2 lg:order-1 flex flex-col w-full overflow-hidden self-stretch min-h-0"
             style={{ background: c.sidebar }}
           >
-            <div className="relative w-full min-w-0 flex-1 min-h-[80px] p-4 pt-4 rounded-none flex flex-col" style={{ background: getBlockBg('contact') }}>
+            <div className="relative w-full min-w-0 flex-1 min-h-[80px] p-4 pt-4 rounded-none flex flex-col border-b-2" style={{ background: getBlockBg('contact'), borderColor: borderColorFromBlock('contact') }}>
               <div id="body-contact" className="section-body">
                 <div className="mb-4 mt-8">
                   <div className="flex items-center justify-center gap-2 mb-1 flex-wrap">
