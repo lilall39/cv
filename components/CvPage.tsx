@@ -847,7 +847,7 @@ export default function CvPage() {
 
       <ScrollIndicators previewMode={previewMode} onTogglePreview={togglePreview} />
 
-      <div className="no-print fixed left-6 top-1/2 flex flex-col gap-3 z-30">
+      <div className="no-print fixed left-6 sm:top-1/2 top-auto bottom-24 flex flex-col gap-3 z-30">
         <button
           onClick={exportPDF}
           className="bg-gray-500 text-white px-6 py-3 rounded-full shadow-lg hover:bg-gray-600 transition-all flex items-center gap-2 font-medium"
@@ -888,11 +888,11 @@ export default function CvPage() {
         </button>
       </div>
 
-      <div className="no-print fixed right-6 top-1/2 flex flex-col gap-3 z-40">
+      <div className="no-print fixed right-6 sm:top-1/2 top-auto bottom-24 flex flex-col gap-3 z-40">
         <button
           type="button"
           onClick={downloadCvJson}
-          className="bg-gray-600 text-white px-6 py-3 rounded-full shadow-lg hover:bg-gray-700 transition-all flex items-center justify-center gap-2 font-medium w-[210px]"
+          className="bg-gray-600 text-white px-6 py-3 rounded-full shadow-lg hover:bg-gray-700 transition-all flex items-center justify-center gap-2 font-medium sm:w-[210px] w-fit"
           title="Sauvegarde un fichier .json pour importer plus tard"
         >
           <svg
@@ -912,7 +912,7 @@ export default function CvPage() {
         </button>
         <button
           onClick={handleImportClick}
-          className="bg-gray-600 text-white px-6 py-3 rounded-full shadow-lg hover:bg-gray-700 transition-all flex items-center justify-center gap-2 font-medium w-[210px] text-center"
+          className="bg-gray-600 text-white px-6 py-3 rounded-full shadow-lg hover:bg-gray-700 transition-all flex items-center justify-center gap-2 font-medium sm:w-[210px] w-fit text-center"
           title="Charger un CV depuis un fichier .json"
         >
           <svg
@@ -938,12 +938,12 @@ export default function CvPage() {
         />
       </div>
 
-      <div className="no-print fixed top-4 right-6 bottom-6 flex flex-col justify-between items-end z-30 pointer-events-none">
-        <div className="flex flex-col gap-2 pointer-events-auto mt-8">
+      <div className="no-print fixed sm:top-4 sm:bottom-6 bottom-4 top-auto right-6 flex flex-col justify-between items-end z-30 pointer-events-none">
+        <div className="flex flex-col gap-2 pointer-events-auto sm:mt-8 mt-0">
           <div className="relative group">
           <button
             onClick={() => setShowNewCvConfirm(true)}
-            className="bg-green-200 text-green-900 px-6 py-3 rounded-full shadow-lg hover:bg-green-300 transition-all flex items-center justify-center gap-2 font-medium shrink-0 w-[210px]"
+            className="bg-green-200 text-green-900 px-6 py-3 rounded-full shadow-lg hover:bg-green-300 transition-all flex items-center justify-center gap-2 font-medium shrink-0 sm:w-[210px] w-fit"
           >
             <svg
               className="w-5 h-5"
@@ -1102,7 +1102,7 @@ function ScrollIndicators({ previewMode, onTogglePreview }: { previewMode: boole
   return (
     <>
       <div
-        className="no-print fixed top-4 z-30 flex flex-col items-end gap-2"
+        className="no-print fixed top-4 z-30 flex flex-col items-start gap-2 left-6 sm:left-auto"
         style={{ right: 'calc(50% + 450px + 1.5rem)' }}
       >
         <Link
@@ -1112,10 +1112,10 @@ function ScrollIndicators({ previewMode, onTogglePreview }: { previewMode: boole
           ← Accueil
         </Link>
       </div>
-      <div className="no-print fixed top-4 left-6 z-30">
+      <div className="no-print fixed sm:top-4 sm:bottom-auto bottom-4 left-6 z-30">
         <button
           onClick={onTogglePreview}
-          className="bg-green-200 text-green-900 px-6 py-3 rounded-full shadow-lg hover:bg-green-300 transition-all flex items-center gap-2 font-medium w-fit mt-8"
+          className="bg-green-200 text-green-900 px-6 py-3 rounded-full shadow-lg hover:bg-green-300 transition-all flex items-center gap-2 font-medium w-fit sm:mt-8 mt-0"
         >
           <svg
             className="w-5 h-5"
