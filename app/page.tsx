@@ -57,7 +57,7 @@ export default function Home() {
             Mon CV
           </h1>
           <p className="text-white/90 mt-4 font-medium text-xl sm:text-2xl">
-            Créez et éditez votre CV en ligne, gratuitement
+            Créez et éditez votre CV en ligne, gratuitement et sans inscription
           </p>
         </div>
       </header>
