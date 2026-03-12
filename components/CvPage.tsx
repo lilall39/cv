@@ -746,44 +746,6 @@ export default function CvPage() {
                   </h2>
                   <div className="flex no-print items-center gap-1 opacity-60 hover:opacity-100 transition-opacity">
                     <BlockColorButton blockId="experience" label="Expériences" />
-                    <button
-                      onClick={() => moveSectionUp('experience')}
-                      className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-600"
-                      title="Monter"
-                    >
-                      <svg
-                        className="w-4 h-4"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M5 15l7-7 7 7"
-                        />
-                      </svg>
-                    </button>
-                    <button
-                      onClick={() => moveSectionDown('experience')}
-                      className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-600"
-                      title="Descendre"
-                    >
-                      <svg
-                        className="w-4 h-4"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M19 9l-7 7-7-7"
-                        />
-                      </svg>
-                    </button>
                   </div>
                 </div>
                 <div id="body-experience" className="section-body">
