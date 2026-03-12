@@ -847,13 +847,13 @@ export default function CvPage() {
 
       <ScrollIndicators previewMode={previewMode} onTogglePreview={togglePreview} />
 
-      <div className="no-print fixed left-6 sm:top-1/2 top-auto bottom-24 flex flex-col gap-3 z-30">
+      <div className="no-print fixed left-1 sm:left-6 sm:top-1/2 top-20 flex flex-col gap-3 z-30">
         <button
           onClick={exportPDF}
-          className="bg-gray-500 text-white px-6 py-3 rounded-full shadow-lg hover:bg-gray-600 transition-all flex items-center gap-2 font-medium"
+          className="bg-gray-500 text-white px-3 py-2 sm:px-6 sm:py-3 rounded-full shadow-lg hover:bg-gray-600 transition-all flex items-center gap-2 font-medium"
         >
           <svg
-            className="w-5 h-5"
+            className="w-4 h-4 sm:w-5 sm:h-5"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -865,14 +865,14 @@ export default function CvPage() {
               d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
             />
           </svg>
-          Télécharger en PDF
+          <span className="text-xs sm:text-base">PDF</span>
         </button>
         <button
           onClick={exportPDF}
-          className="bg-gray-500 text-white px-6 py-3 rounded-full shadow-lg hover:bg-gray-600 transition-all flex items-center gap-2 font-medium"
+          className="bg-gray-500 text-white px-3 py-2 sm:px-6 sm:py-3 rounded-full shadow-lg hover:bg-gray-600 transition-all flex items-center gap-2 font-medium"
         >
           <svg
-            className="w-5 h-5"
+            className="w-4 h-4 sm:w-5 sm:h-5"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -884,19 +884,19 @@ export default function CvPage() {
               d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"
             />
           </svg>
-          Imprimer
+          <span className="text-xs sm:text-base">Imprimer</span>
         </button>
       </div>
 
-      <div className="no-print fixed right-6 sm:top-1/2 top-auto bottom-24 flex flex-col gap-3 z-40">
+      <div className="no-print fixed right-1 sm:right-6 sm:top-1/2 top-20 flex flex-col gap-3 z-40">
         <button
           type="button"
           onClick={downloadCvJson}
-          className="bg-gray-600 text-white px-6 py-3 rounded-full shadow-lg hover:bg-gray-700 transition-all flex items-center justify-center gap-2 font-medium sm:w-[210px] w-fit"
+          className="bg-gray-600 text-white px-3 py-2 sm:px-6 sm:py-3 rounded-full shadow-lg hover:bg-gray-700 transition-all flex items-center justify-center gap-2 font-medium sm:w-[210px] w-fit"
           title="Sauvegarde un fichier .json pour importer plus tard"
         >
           <svg
-            className="w-5 h-5 shrink-0"
+            className="w-4 h-4 sm:w-5 sm:h-5 shrink-0"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -908,15 +908,15 @@ export default function CvPage() {
               d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
             />
           </svg>
-          <span className="text-left leading-tight block">Télécharger les données du CV<br />(pour réutilisation<br />sur l&apos;appli)</span>
+          <span className="text-left leading-tight block text-[10px] sm:text-sm">Données</span>
         </button>
         <button
           onClick={handleImportClick}
-          className="bg-gray-600 text-white px-6 py-3 rounded-full shadow-lg hover:bg-gray-700 transition-all flex items-center justify-center gap-2 font-medium sm:w-[210px] w-fit text-center"
+          className="bg-gray-600 text-white px-3 py-2 sm:px-6 sm:py-3 rounded-full shadow-lg hover:bg-gray-700 transition-all flex items-center justify-center gap-2 font-medium sm:w-[210px] w-fit text-center"
           title="Charger un CV depuis un fichier .json"
         >
           <svg
-            className="w-5 h-5 shrink-0"
+            className="w-4 h-4 sm:w-5 sm:h-5 shrink-0"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -928,7 +928,7 @@ export default function CvPage() {
               d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"
             />
           </svg>
-          <span className="leading-tight block">Importer vos données d&apos;un CV<br />sauvegardé sur l&apos;appli</span>
+          <span className="leading-tight block text-[10px] sm:text-sm">Importer</span>
         </button>
         <input
           ref={importInputRef}
@@ -938,7 +938,7 @@ export default function CvPage() {
         />
       </div>
 
-      <div className="no-print fixed sm:top-4 sm:bottom-6 bottom-4 top-auto right-6 flex flex-col justify-between items-end z-30 pointer-events-none">
+      <div className="no-print fixed sm:top-4 sm:bottom-6 bottom-4 top-auto right-1 sm:right-6 flex flex-col justify-between items-end z-30 pointer-events-none">
         <div className="flex flex-col gap-2 pointer-events-auto sm:mt-8 mt-0">
           <div className="relative group">
           <button
@@ -1102,7 +1102,7 @@ function ScrollIndicators({ previewMode, onTogglePreview }: { previewMode: boole
   return (
     <>
       <div
-        className="no-print fixed top-4 z-30 flex flex-col items-start gap-2 left-6 sm:left-auto"
+        className="no-print fixed top-4 z-30 flex flex-col items-start gap-2 left-1 sm:left-auto"
         style={{ right: 'calc(50% + 450px + 1.5rem)' }}
       >
         <Link
@@ -1112,7 +1112,7 @@ function ScrollIndicators({ previewMode, onTogglePreview }: { previewMode: boole
           ← Accueil
         </Link>
       </div>
-      <div className="no-print fixed sm:top-4 sm:bottom-auto bottom-4 left-6 z-30">
+      <div className="no-print fixed sm:top-4 sm:bottom-auto bottom-4 left-1 sm:left-6 z-30">
         <button
           onClick={onTogglePreview}
           className="bg-green-200 text-green-900 px-6 py-3 rounded-full shadow-lg hover:bg-green-300 transition-all flex items-center gap-2 font-medium w-fit sm:mt-8 mt-0"
